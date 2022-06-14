@@ -1,0 +1,265 @@
+import Topbar from "../../components/topbar/Topbar";
+import Navigation from "../../components/topbar/Navigation";
+import Conversation from "../../components/conversations/Conversation";
+import CurrentChatBox from "../../components/currentChatBox/CurrentChatBox";
+import ChatOnline from "../../components/chatOnline/ChatOnline";
+import FriendsSidebar from "../../components/friendsSidebar/FriendsSidebar";
+import ProfileBar from "../../components/profileBar/ProfileBar";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
+import { io } from "socket.io-client";
+import { navigations } from '../../utils-contants';
+import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
+import NewGroupModal from "../../modals/NewGroupModal";
+import EditProfileModal from "../../modals/EditProfileModal";
+import VideoCallModal from "../../modals/VideoCallModal";
+
+
+export default function Messenger() {
+  const [conversations, setConversations] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);   // store online users' ids
+  const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
+  const [isProfileBarActive, setProfileBarActive] = useState(false);
+
+  const socket = useRef();
+  const { user } = useContext(AuthContext);
+  const scrollRef = useRef();
+
+  // test useEffect
+  // useEffect(() => {
+  //   console.log('test:  ', isProfileBarActive);
+  // }, [isProfileBarActive]);
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900"); // local socket server address 
+    socket.current.on("getMessage", (data) => { // socket server sends message from others to current user to get
+      console.log(data.text);
+
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    // check for arrival message and does that message is sent by the user in that conversation
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sender) &&
+      setMessages((prev) => [...prev, arrivalMessage]);   // add arrival message to the current conversation
+  }, [arrivalMessage, currentChat]);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user._id);   // add current user id to the socket server
+    socket.current.on("getUsers", (users) => {
+      const currentOnlineUsersId =  users.filter(u => u.userId !== user._id).map(u => u.userId);
+      setOnlineUsers(
+        currentOnlineUsersId
+      );
+    });
+  }, [user]);
+
+  useEffect(() => {
+
+    const getConversations = async () => {
+      try {
+        const res = await axios.get("/conversations/" + user._id);
+        setConversations(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getConversations();
+
+  
+  }, [user._id, arrivalMessage, currentChat]);
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const res = await axios.get("/messages/" + currentChat?._id);
+        setMessages(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getMessages();
+  }, [currentChat]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const message = {
+      sender: user._id,
+      text: newMessage,
+      conversationId: currentChat._id,
+    };
+
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
+
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessage,
+    });
+
+    try {
+      const res = await axios.post("/messages", message);
+      setMessages([...messages, res.data]);
+      setNewMessage("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  return (
+    // <>
+    //   <Topbar />
+    //   <div className="messenger">
+    //     <div className="chatMenu">
+    //       <div className="chatMenuWrapper">
+    //         {/* <hr className="sidebarHr"/>
+    //         <p style={{ fontWeight: '300' }}>Your Groups</p> */}
+            
+    //         <hr className="sidebarHr"/>
+    //         <p style={{ fontWeight: '300' }}>Current conversations</p>
+
+    //         {/* <input placeholder="Search for friends" className "chatMenuInput" /> */}
+    //         {conversations.map((c) => (
+    //           <div onClick={() => setCurrentChat(c)} >
+    //             <Conversation conversation={c} currentUser={user} key={c._id}/>
+    //           </div>
+    //         ))}
+    //       </div>
+
+    //     </div>
+    //     <div className="chatBox">
+    //       <div className="chatBoxWrapper">
+    //         {currentChat ? (
+    //           <CurrentChatBox 
+    //             messages={messages}
+    //             user = {user}
+    //             setNewMessage = {setNewMessage}
+    //             newMessage = {newMessage}
+    //             handleSubmit = {handleSubmit}
+    //             scrollRef = {scrollRef}
+    //             membersId = {currentChat.members}
+    //             currentChat = {currentChat}
+    //           />
+    //         ) : (
+    //           <span className="noConversationText">
+    //             Open a conversation to start a chat.
+    //           </span>
+    //         )}
+    //       </div>
+    //     </div>
+    //     <div className="chatOnline">
+    //       <div className="chatOnlineWrapper">
+    //         <p>Online</p>
+    //         <ChatOnline
+    //           onlineUsersId={onlineUsers}
+    //           currentId={user._id}
+    //           setCurrentChat={setCurrentChat}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    // </>
+    <body>
+
+      {/* <!-- video call modal --> */}
+      <VideoCallModal />
+      {/* <!-- ./ video call modal --> */}
+
+      {/* <!-- new group modal --> */}
+      <NewGroupModal />
+      {/* <!-- ./ new group modal --> */}
+      
+      {/* <!-- edit profile modal --> */}
+      <EditProfileModal />
+      {/* <!-- ./ edit profile modal --> */}
+
+      {/* <!-- layout --> */}
+      <div class="layout">
+
+          {/* <!-- navigation --> */}
+          <Navigation user = {user} setCurrentNavigation = {setCurrentNavigation} setProfileBarActive = {setProfileBarActive}/>
+          {/* <!-- ./ navigation --> */}
+
+          {/* <!-- content --> */}
+          <div class="content">
+            {/* <!-- sidebar group --> */}
+            <div class="sidebar-group">
+              {
+                currentNavigation === navigations.conversations ? 
+                // <!-- Conversations sidebar --> 
+                <ConversationSidebar 
+                  conversations={conversations} 
+                  currentUser = {user} 
+                  setCurrentChat = {setCurrentChat} 
+                  onlineUsersId = {onlineUsers} 
+                  setCurrentNavigation = {setCurrentNavigation}  
+                />
+                /* <!-- ./ Conversations sidebar --> */
+                : <></>
+              }
+              {
+                currentNavigation === navigations.onlineFriends ? 
+                /* <!-- Friends sidebar --> */
+                <FriendsSidebar 
+                  onlineUsersId={onlineUsers}
+                  currentId={user._id}
+                  setCurrentChat={setCurrentChat}
+                />
+                /* <!-- ./ Friends sidebar --> */
+                : <></>
+              }
+            </div>
+            {/* <!-- ./ sidebar group --> */}
+
+            {/* <!-- chat --> */}
+            {currentChat ? (
+              <CurrentChatBox 
+                messages={messages}
+                user = {user}
+                setNewMessage = {setNewMessage}
+                newMessage = {newMessage}
+                handleSubmit = {handleSubmit}
+                scrollRef = {scrollRef}
+                membersId = {currentChat.members}
+                currentChat = {currentChat}
+              />
+            ) : (
+              <span style = {{ margin: 'auto', textAlign: 'center', fontSize: '25px' }}>
+                Open a conversation to start a chat or create new chat.
+              </span>
+            )}
+            {/* <!-- ./ chat --> */}
+
+            {/* <!-- profile bar --> */}
+            <ProfileBar 
+              user={user} 
+              isProfileBarActive = {isProfileBarActive} 
+              setProfileBarActive = {setProfileBarActive} 
+            />
+            {/* <!-- ./ profile bar --> */}
+          </div>
+          {/* <!-- ./ content --> */}
+
+      </div>
+      {/* <!-- ./ layout --> */}
+
+    </body>
+  );
+}

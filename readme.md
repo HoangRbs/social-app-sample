@@ -1,0 +1,1 @@
+go to each folder for guidance 

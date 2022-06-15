@@ -3,9 +3,6 @@ import CurrentChatBox from "../../components/currentChatBox/CurrentChatBox";
 import FriendsSidebar from "../../components/friendsSidebar/FriendsSidebar";
 import ProfileBar from "../../components/profileBar/ProfileBar";
 import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
-import NewGroupModal from "../../modals/NewGroupModal";
-import EditProfileModal from "../../modals/EditProfileModal";
-import VideoCallModal from "../../modals/VideoCallModal";
 
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -129,19 +126,6 @@ export default function Messenger() {
   return (
     
     <body>
-
-      {/* <!-- video call modal --> */}
-      <VideoCallModal />
-      {/* <!-- ./ video call modal --> */}
-
-      {/* <!-- new group modal --> */}
-      <NewGroupModal />
-      {/* <!-- ./ new group modal --> */}
-      
-      {/* <!-- edit profile modal --> */}
-      <EditProfileModal />
-      {/* <!-- ./ edit profile modal --> */}
-
       {/* <!-- layout --> */}
       <div class="layout">
 

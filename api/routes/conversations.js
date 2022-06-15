@@ -42,7 +42,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// get conversation includes two userId so client can display the messages on main chat screen
+// get a conversation includes two userId so client can display the messages on main chat screen
 
 router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
   try {

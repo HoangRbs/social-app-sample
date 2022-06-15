@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiRoutes } from "../../utils-contants";
 
 export default function Conversation({ conversation, currentUser, onlineUsersId }) {
   const [user, setUser] = useState(null);
@@ -23,7 +24,8 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
 
     const getUser = async () => {
       try {
-        const res = await axios("/users?userId=" + friendId);
+        // const res = await axios("/users?userId=" + friendId);
+        const res = await axios(apiRoutes.getUser(friendId));
         setUser(res.data);
       } catch (err) {
         console.log(err);

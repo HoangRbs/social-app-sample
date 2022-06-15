@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Tooltip } from '@mui/material';
 import { navigations } from '../../utils-contants';
 
- // --------------- dropdown menu import components ----------------
+// --------------- dropdown menu import components ----------------
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';

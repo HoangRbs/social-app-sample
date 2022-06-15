@@ -1,6 +1,7 @@
 import Message from "../../components/message/Message";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiRoutes } from "../../utils-contants";
 
 export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, membersId, currentChat }) {
     const [membersInBox, setMembersInBox] = useState([]);
@@ -9,7 +10,8 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
 
     useEffect(() => {
         const getMembers = async () => {
-            const responses = await Promise.all(membersId.map(id => axios.get(`/users/?userId=${id}`))); 
+            // const responses = await Promise.all(membersId.map(id => axios.get(`/users/?userId=${id}`)));
+            const responses = await Promise.all(membersId.map(id => axios.get(apiRoutes.getUser(id))));
             const datas = responses.map(res => res.data);
         
             setMembersInBox(datas);

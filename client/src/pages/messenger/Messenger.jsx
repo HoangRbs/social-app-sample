@@ -11,14 +11,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { navigations } from '../../utils-contants';
+import { apiRoutes, navigations, socketEvents } from '../../utils-contants';
 
 
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState("");   // just to rerender the current chat box component for a new message
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);   // store online users' ids
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
@@ -35,8 +35,8 @@ export default function Messenger() {
 
   useEffect(() => {
     socket.current = io("ws://localhost:8900"); // local socket server address 
-    socket.current.on("getMessage", (data) => { // socket server sends message from others to current user to get
-      console.log(data.text);
+    socket.current.on(socketEvents.getMessage, (data) => { // socket server sends message from others to current user
+      // console.log(data.text);
 
       setArrivalMessage({
         sender: data.senderId,
@@ -54,8 +54,8 @@ export default function Messenger() {
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
-    socket.current.emit("addUser", user._id);   // add current user id to the socket server
-    socket.current.on("getUsers", (users) => {
+    socket.current.emit(socketEvents.addUser, user._id);   // add current user id to the socket server
+    socket.current.on(socketEvents.getUsers, (users) => {  // get online users currently on socket server
       const currentOnlineUsersId =  users.filter(u => u.userId !== user._id).map(u => u.userId);
       setOnlineUsers(
         currentOnlineUsersId
@@ -67,7 +67,9 @@ export default function Messenger() {
 
     const getConversations = async () => {
       try {
-        const res = await axios.get("/conversations/" + user._id);
+        // const res = await axios.get("/conversations/" + user._id);
+        const res = await axios.get(apiRoutes.getConversations(user._id));
+
         setConversations(res.data);
       } catch (err) {
         console.log(err);
@@ -81,7 +83,8 @@ export default function Messenger() {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get("/messages/" + currentChat?._id);
+        // const res = await axios.get("/messages/" + currentChat?._id);
+        const res = await axios.get(apiRoutes.getMessages(currentChat?._id));
         setMessages(res.data);
       } catch (err) {
         console.log(err);
@@ -101,15 +104,17 @@ export default function Messenger() {
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
-
-    socket.current.emit("sendMessage", {
+    
+    // current logged in user send message (in text as newMessage to the other though socker server)
+    socket.current.emit(socketEvents.sendMessage, {
       senderId: user._id,
       receiverId,
       text: newMessage,
     });
 
     try {
-      const res = await axios.post("/messages", message);
+      // const res = await axios.post("/messages", message); // create that new message on api server
+      const res = await axios.post(apiRoutes.createAMessage, message);
       setMessages([...messages, res.data]);
       setNewMessage("");
     } catch (err) {

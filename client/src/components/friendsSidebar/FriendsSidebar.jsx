@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as React from 'react';
 import { useEffect, useState } from "react";
+import { apiRoutes } from "../../utils-contants";
 
  // --------------- dropdown menu import components ----------------
 import Menu from '@mui/material/Menu';
@@ -14,7 +15,8 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
 
     useEffect(() => {
         const getAllFriends = async () => {
-            const res = await axios.get("/users/getAll");
+            // const res = await axios.get("/users/getAll");
+            const res = await axios.get(apiRoutes.getAllUsers);
             const tmp = res.data.filter(f => f._id !== currentId);
             setAllFriends(tmp);
         };
@@ -25,8 +27,12 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
     // click on a online friend to go to conversation
     const handleClick = async (user) => {
         try {
+            // const res = await axios.get(
+            //     `/conversations/find/${currentId}/${user._id}`
+            // );
+
             const res = await axios.get(
-                `/conversations/find/${currentId}/${user._id}`
+                apiRoutes.findAConversation(currentId, user._id)
             );
 
             if (!res.data) setIsNoMessage({ ...isNoMessage, [user._id]: true }); 
@@ -41,8 +47,15 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
     const handleNewConversation = async (user) => {
 
         try {
+            // const res = await axios.post(
+            //     `/conversations`, {
+            //     senderId: currentId,
+            //     receiverId: user._id 
+            //     }
+            // );
+
             const res = await axios.post(
-                `/conversations`, {
+                apiRoutes.createNewConversation, {
                 senderId: currentId,
                 receiverId: user._id 
                 }

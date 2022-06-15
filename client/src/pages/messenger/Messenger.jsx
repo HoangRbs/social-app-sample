@@ -1,19 +1,17 @@
-import Topbar from "../../components/topbar/Topbar";
-import Navigation from "../../components/topbar/Navigation";
-import Conversation from "../../components/conversations/Conversation";
+import Navigation from "../../components/navigation/Navigation";
 import CurrentChatBox from "../../components/currentChatBox/CurrentChatBox";
-import ChatOnline from "../../components/chatOnline/ChatOnline";
 import FriendsSidebar from "../../components/friendsSidebar/FriendsSidebar";
 import ProfileBar from "../../components/profileBar/ProfileBar";
+import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
+import NewGroupModal from "../../modals/NewGroupModal";
+import EditProfileModal from "../../modals/EditProfileModal";
+import VideoCallModal from "../../modals/VideoCallModal";
+
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { navigations } from '../../utils-contants';
-import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
-import NewGroupModal from "../../modals/NewGroupModal";
-import EditProfileModal from "../../modals/EditProfileModal";
-import VideoCallModal from "../../modals/VideoCallModal";
 
 
 export default function Messenger() {
@@ -124,58 +122,7 @@ export default function Messenger() {
   }, [messages]);
 
   return (
-    // <>
-    //   <Topbar />
-    //   <div className="messenger">
-    //     <div className="chatMenu">
-    //       <div className="chatMenuWrapper">
-    //         {/* <hr className="sidebarHr"/>
-    //         <p style={{ fontWeight: '300' }}>Your Groups</p> */}
-            
-    //         <hr className="sidebarHr"/>
-    //         <p style={{ fontWeight: '300' }}>Current conversations</p>
-
-    //         {/* <input placeholder="Search for friends" className "chatMenuInput" /> */}
-    //         {conversations.map((c) => (
-    //           <div onClick={() => setCurrentChat(c)} >
-    //             <Conversation conversation={c} currentUser={user} key={c._id}/>
-    //           </div>
-    //         ))}
-    //       </div>
-
-    //     </div>
-    //     <div className="chatBox">
-    //       <div className="chatBoxWrapper">
-    //         {currentChat ? (
-    //           <CurrentChatBox 
-    //             messages={messages}
-    //             user = {user}
-    //             setNewMessage = {setNewMessage}
-    //             newMessage = {newMessage}
-    //             handleSubmit = {handleSubmit}
-    //             scrollRef = {scrollRef}
-    //             membersId = {currentChat.members}
-    //             currentChat = {currentChat}
-    //           />
-    //         ) : (
-    //           <span className="noConversationText">
-    //             Open a conversation to start a chat.
-    //           </span>
-    //         )}
-    //       </div>
-    //     </div>
-    //     <div className="chatOnline">
-    //       <div className="chatOnlineWrapper">
-    //         <p>Online</p>
-    //         <ChatOnline
-    //           onlineUsersId={onlineUsers}
-    //           currentId={user._id}
-    //           setCurrentChat={setCurrentChat}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    // </>
+    
     <body>
 
       {/* <!-- video call modal --> */}

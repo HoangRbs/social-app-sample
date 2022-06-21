@@ -1,7 +1,8 @@
 import axios from "axios";
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { apiRoutes } from "../../utils-contants";
+import { apiRoutes, axiosHeadersObject } from "../../utils-contants";
+import { currentChatObject } from "../../utils-contants";
 
  // --------------- dropdown menu import components ----------------
 import Menu from '@mui/material/Menu';
@@ -10,14 +11,12 @@ import MenuItem from '@mui/material/MenuItem';
 
 export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentChat }) {
     const [allFriends, setAllFriends] = useState([]);
-    const [isNoMessage, setIsNoMessage] = useState({});  // there's no message between you and the online user
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
     useEffect(() => {
         const getAllFriends = async () => {
-            // const res = await axios.get("/users/getAll");
-            const res = await axios.get(apiRoutes.getAllUsers);
-            const tmp = res.data.filter(f => f._id !== currentId);
+            const res = await axios.get(apiRoutes.getAllUsers, axiosHeadersObject());
+            const tmp = res.data.data.filter(f => f.id !== currentId);
             setAllFriends(tmp);
         };
 
@@ -27,47 +26,50 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
     // click on a online friend to go to conversation
     const handleClick = async (user) => {
         try {
-            // const res = await axios.get(
-            //     `/conversations/find/${currentId}/${user._id}`
-            // );
 
             const res = await axios.get(
-                apiRoutes.findAConversation(currentId, user._id)
+                apiRoutes.findAConversation(user.id),
+                axiosHeadersObject()
             );
 
-            if (!res.data) setIsNoMessage({ ...isNoMessage, [user._id]: true }); 
-            
-            setCurrentChat(res.data);
+            const conversation = {
+                isPrivateChat: true,
+                userReceiveId: user.id,
+                ...res.data.data
+            };
+
+            setCurrentChat(conversation);
+
         } catch (err) {
             console.log(err);
         }
     };
 
     // create a new conversation
-    const handleNewConversation = async (user) => {
+    // const handleNewConversation = async (user) => {
 
-        try {
-            // const res = await axios.post(
-            //     `/conversations`, {
-            //     senderId: currentId,
-            //     receiverId: user._id 
-            //     }
-            // );
+    //     try {
+    //         // const res = await axios.post(
+    //         //     `/conversations`, {
+    //         //     senderId: currentId,
+    //         //     receiverId: user._id 
+    //         //     }
+    //         // );
 
-            const res = await axios.post(
-                apiRoutes.createNewConversation, {
-                senderId: currentId,
-                receiverId: user._id 
-                }
-            );
+    //         // const res = await axios.post(
+    //         //     apiRoutes.createNewConversation, {
+    //         //     senderId: currentId,
+    //         //     receiverId: user.id 
+    //         //     }
+    //         // );
 
-            if (res.data) setIsNoMessage({ ...isNoMessage, [user._id]: false }); ; 
+    //         // if (res.data) setIsNoMessage({ ...isNoMessage, [user.id]: false }); ; 
             
-            setCurrentChat(res.data);   
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    //         // setCurrentChat(res.data);   
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     // ------------- <drop down menu function> -------------
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -104,15 +106,15 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
             <div class="sidebar-body" tabindex="3" style = {{ overFlow: 'hidden', outline: 'none' }}>
                 <ul class="list-group list-group-flush">
                     {allFriends.map((o) => (
-                        <li class="list-group-item" data-navigation-target="chats" key={o._id}>
+                        <li class="list-group-item" data-navigation-target="chats" key={o.id}>
                             {
-                                onlineUsersId.includes(o._id) ? 
+                                onlineUsersId.includes(o.id) ? 
                                 <div onClick={() => handleClick(o)}>
                                     <figure class="avatar avatar-state-success">
                                         <img 
                                             src={
-                                                o?.profilePicture
-                                                ? o.profilePicture
+                                                o?.profile_pic_url
+                                                ? o.profile_pic_url
                                                 : PF + "person/noAvatar.png"
                                             } 
                                             class="rounded-circle" 
@@ -125,8 +127,8 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                     <figure class="avatar">
                                         <img 
                                             src={
-                                                o?.profilePicture
-                                                ? o.profilePicture
+                                                o?.profile_pic_url
+                                                ? o.profile_pic_url
                                                 : PF + "person/noAvatar.png"
                                             } 
                                             class="rounded-circle" 
@@ -137,13 +139,7 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                             }
                             <div class="users-list-body">
                                 <div>
-                                    <h5> {o?.username} </h5>
-                                    {/* {isNoMessage[o._id] ? 
-                                        <div>
-                                            <button onClick = {() => handleNewConversation(o)}>{"start new conversation"}</button> 
-                                        </div> : <></>
-                                    }
-                                    <p>Dental Hygienist</p> */}
+                                    <h5> {o?.user_name} </h5>
                                 </div>
                                 <div 
                                     class="users-list-action"
@@ -171,12 +167,6 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                     }}
                                 >
                                     <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                    { isNoMessage[o._id] ? 
-                                        // <MenuItem onClick={() => { handleNewConversation(o); handleClose(); }}>
-                                        //     New Chat
-                                        // </MenuItem> : <></>
-                                        <MenuItem> New Chat </MenuItem> : <></>
-                                    }
                                 </Menu>
                             </div>
                         </li>

@@ -17,27 +17,30 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     // ------- ./modal ----------
 
     useEffect(() => {
-        const getMembers = async () => {
-            // const responses = await Promise.all(membersId.map(id => axios.get(`/users/?userId=${id}`)));
-            const responses = await Promise.all(membersId.map(id => axios.get(apiRoutes.getUser(id))));
-            const datas = responses.map(res => res.data);
+        // const getMembers = async () => {
+        //     // const responses = await Promise.all(membersId.map(id => axios.get(`/users/?userId=${id}`)));
+        //     const responses = await Promise.all(membersId.map(id => axios.get(apiRoutes.getUser(id))));
+        //     const datas = responses.map(res => res.data);
         
-            setMembersInBox(datas);
-        };
+        //     setMembersInBox(datas);
+        // };
     
-        getMembers();
+        // getMembers();
+
+        setChatBoxName(currentChat.conversationName);
+
     }, [currentChat]);
 
-    useEffect(() => {
-        // if only 2 members
-        if (membersId.length === 2) {
-            const sender = membersInBox.find(member => member._id !== user._id);
-            setChatBoxImg(sender?.profilePicture);
-            setChatBoxName(sender?.username);
-        } else {
-            // if is a group, only show svg vector img with first letter of group name: 'group name'.
-        }
-    }, [membersInBox]);
+    // useEffect(() => {
+    //     // if only 2 members
+    //     // if (membersId.length === 2) {
+    //     //     const sender = membersInBox.find(member => member.id !== user.id);
+    //     //     setChatBoxImg(sender?.profilePicture);
+    //     //     setChatBoxName(sender?.username);
+    //     // } else {
+    //     //     // if is a group, only show svg vector img with first letter of group name: 'group name'.
+    //     // }
+    // }, [membersInBox]);
 
     useEffect(() => {
         // auto scroll to the bottom of chat box
@@ -110,27 +113,30 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
             > 
                 {
                     /* <!-- .no-message --> */
-                    !messages ? 
+                    !messages.length ? 
                     <div class="no-message-container">
                         <div class="row mb-5">
-                            <div class="col-md-4 offset-4">
+                            {/* <div class="col-md-4 offset-4">
                                 <img src="./dist/media/svg/undraw_empty_xct9.svg" class="img-fluid" alt="image"/>
-                            </div>
+                            </div> */}
                         </div>
                         <p class="lead">write a message</p>
                     </div>
                     :
                     <div class="messages">
                         {messages.map((m) => {
-                            const sender = membersInBox.find(member => member._id === m.sender); 
+                            // find the sender with full imformation
+                            // const sender = membersInBox.find(member => member.id === m.sender); 
 
                             return (               
                                 // <div ref={scrollRef}>
-                                    <Message key={m.sender} 
-                                            message={m} 
-                                            own={m.sender === user._id} 
-                                            senderUsername = {sender?.username}
-                                            senderProfilePicture = {sender?.profilePicture}/>
+                                    // <Message 
+                                    //     key={m.sender} 
+                                    //     message={m} 
+                                    //     own={m.sender === user.id} 
+                                    //     senderUsername = {sender?.username}
+                                    //     senderProfilePicture = {sender?.profilePicture}/>
+                                    <></>
                                 // </div> 
                             ) 
                         })}

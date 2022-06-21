@@ -12,7 +12,6 @@ router.get("/getAll", async (req, res) => {
 });
 
 //add
-
 router.post("/", async (req, res) => {
   const newMessage = new Message(req.body);
 
@@ -25,7 +24,6 @@ router.post("/", async (req, res) => {
 });
 
 //get
-
 router.get("/:conversationId", async (req, res) => {
   try {
     const messages = await Message.find({

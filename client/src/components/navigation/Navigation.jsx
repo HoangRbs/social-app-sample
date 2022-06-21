@@ -102,7 +102,7 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                         </Tooltip>
                     </li>
                     
-                    <li class="brackets" onClick = {(e) => { e.preventDefault() ;setCurrentNavigation(navigations.onlineFriends) }}>
+                    <li class="brackets" onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.onlineFriends) }}>
                         <Tooltip title={<span style={{  fontSize: '14px' }}>Online Friends</span>} placement="right">
                             <a data-navigation-target="friends" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Friends">
                                 <span class="badge badge-danger"></span>
@@ -125,8 +125,8 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                             >
                                 <figure class="avatar">
                                     <img src={
-                                        user.profilePicture
-                                            ? user.profilePicture
+                                        user.profile_pic_url
+                                            ? user.profile_pic_url
                                             : PF + "person/noAvatar.png"
                                         } 
                                         class="rounded-circle" alt="image" 

@@ -7,21 +7,35 @@ import ConversationSidebar from "../../components/conversationsSidebar/Conversat
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
-import { io } from "socket.io-client";
-import { apiRoutes, navigations, socketEvents } from '../../utils-contants';
+import { apiRoutes, axiosHeadersObject, navigations, socketEvents } from '../../utils-contants';
+// import { io } from "socket.io-client";
 
+import socketIOClient  from "socket.io-client";
+import * as sailsIOClient from 'sails.io.js'
+
+let ioClient;
+delete socketIOClient.sails;
+ioClient = sailsIOClient(socketIOClient);
+
+ioClient.sails.url = "http://localhost:6002";
+ioClient.sails.useCORSRouteToGetCookie = false;
+ioClient.sails.query = `token=${localStorage.getItem('token')}`;
+
+ioClient.socket.get('/subscribe', function (res) {
+  console.log('connect socket successfully !');
+})
 
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");   // just to rerender the current chat box component for a new message
+  const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);   // store online users' ids
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
 
-  const socket = useRef();
+  // const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
@@ -31,33 +45,39 @@ export default function Messenger() {
   // }, [isProfileBarActive]);
 
   useEffect(() => {
-    socket.current = io("ws://localhost:8900"); // local socket server address 
-    socket.current.on(socketEvents.getMessage, (data) => { // socket server sends message from others to current user
-      // console.log(data.text);
+    // socket.current = io("ws://localhost:8900"); // local socket server address 
 
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
+    // socket.current.on(socketEvents.getMessage, (data) => { // socket server sends message from others to current user
+
+    //   setArrivalMessage({
+    //     sender: data.senderId,
+    //     text: data.text,
+    //     createdAt: Date.now(),
+    //   });
+    // });
+
+    ioClient.socket.on('getMessage', function (data) {
+      console.log('get message: ', data);  
+    })
+  
+
   }, []);
 
   useEffect(() => {
-    // check for arrival message and does that message is sent by the user in that conversation
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev, arrivalMessage]);   // add arrival message to the current conversation
+    // check for arrival message (real time) and does that message is sent by the user in that conversation
+    // arrivalMessage &&
+    //   currentChat?.members.includes(arrivalMessage.sender) &&
+    //   setMessages((prev) => [...prev, arrivalMessage]);   // add arrival message to the current conversation
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
-    socket.current.emit(socketEvents.addUser, user._id);   // add current user id to the socket server
-    socket.current.on(socketEvents.getUsers, (users) => {  // get online users currently on socket server
-      const currentOnlineUsersId =  users.filter(u => u.userId !== user._id).map(u => u.userId);
-      setOnlineUsers(
-        currentOnlineUsersId
-      );
-    });
+    // socket.current.emit(socketEvents.addUser, user._id);   // add current user id to the socket server
+    // socket.current.on(socketEvents.getUsers, (users) => {  // get online users currently on socket server
+    //   const currentOnlineUsersId =  users.filter(u => u.userId !== user._id).map(u => u.userId);
+    //   setOnlineUsers(
+    //     currentOnlineUsersId
+    //   );
+    // });
   }, [user]);
 
   useEffect(() => {
@@ -65,7 +85,9 @@ export default function Messenger() {
     const getConversations = async () => {
       try {
         // const res = await axios.get("/conversations/" + user._id);
-        const res = await axios.get(apiRoutes.getConversations(user._id));
+        const res = await axios.get(apiRoutes.getConversations, axiosHeadersObject());
+
+        // console.log('conversations: ', res.data);
 
         setConversations(res.data);
       } catch (err) {
@@ -75,14 +97,16 @@ export default function Messenger() {
     getConversations();
 
   
-  }, [user._id, arrivalMessage, currentChat]);
+  }, [user.id, arrivalMessage, currentChat]);
 
+
+  // after setting a current chat, set messages of that current chat
   useEffect(() => {
     const getMessages = async () => {
       try {
         // const res = await axios.get("/messages/" + currentChat?._id);
-        const res = await axios.get(apiRoutes.getMessages(currentChat?._id));
-        setMessages(res.data);
+        // const res = await axios.get(apiRoutes.getMessages(currentChat?.id));
+        setMessages(currentChat.chats);
       } catch (err) {
         console.log(err);
       }
@@ -92,31 +116,38 @@ export default function Messenger() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const message = {
-      sender: user._id,
-      text: newMessage,
-      conversationId: currentChat._id,
-    };
 
-    const receiverId = currentChat.members.find(
-      (member) => member !== user._id
-    );
+    // console.log(currentChat);
+
+    const sendMessage = {
+      message: newMessage,
+      recvId: currentChat.userReceiveId,
+      msg_type: "string" 
+    };
     
     // current logged in user send message (in text as newMessage to the other though socker server)
-    socket.current.emit(socketEvents.sendMessage, {
-      senderId: user._id,
-      receiverId,
-      text: newMessage,
-    });
+    // socket.current.emit(socketEvents.sendMessage, {
+    //   senderId: user._id,
+    //   receiverId,
+    //   text: newMessage,
+    // });
 
-    try {
-      // const res = await axios.post("/messages", message); // create that new message on api server
-      const res = await axios.post(apiRoutes.createAMessage, message);
-      setMessages([...messages, res.data]);
-      setNewMessage("");
-    } catch (err) {
-      console.log(err);
-    }
+    // send private chat message
+    ioClient.socket.get('/send', { ...sendMessage }, function (res){
+      console.log(res);
+    })
+
+    setNewMessage("");
+
+    // try {
+    //   // const res = await axios.post("/messages", message); // create that new message on api server, no need cuz sail js do it in the backend
+
+    //   // added the newly created message (one message)
+    //   // const res = await axios.post(apiRoutes.createAMessage, message);
+    //   // setMessages([...messages, res.data]);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   useEffect(() => {
@@ -155,7 +186,7 @@ export default function Messenger() {
                 /* <!-- Friends sidebar --> */
                 <FriendsSidebar 
                   onlineUsersId={onlineUsers}
-                  currentId={user._id}
+                  currentId={user.id}
                   setCurrentChat={setCurrentChat}
                 />
                 /* <!-- ./ Friends sidebar --> */
@@ -173,12 +204,12 @@ export default function Messenger() {
                 newMessage = {newMessage}
                 handleSubmit = {handleSubmit}
                 scrollRef = {scrollRef}
-                membersId = {currentChat.members}
+                membersId = {[]}
                 currentChat = {currentChat}
               />
             ) : (
               <span style = {{ margin: 'auto', textAlign: 'center', fontSize: '25px' }}>
-                Open a conversation to start a chat or create new chat.
+                Open a conversation to start a chat or click on a friend.
               </span>
             )}
             {/* <!-- ./ chat --> */}

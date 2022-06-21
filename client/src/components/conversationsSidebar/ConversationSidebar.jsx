@@ -46,16 +46,16 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                 </form>
                 <div class="sidebar-body" tabindex="2" style={{overflow: "hidden", outline: "none" }}>
                     <ul class="list-group list-group-flush">
-                        {conversations.map((c) => (
+                        {/* {conversations.map((c) => (
                             <li onClick={() => setCurrentChat(c)} >
                                 <Conversation 
                                     conversation={c} 
                                     currentUser={currentUser} 
                                     onlineUsersId = {onlineUsersId}
-                                    key={c._id} 
+                                    key={c.id} 
                                 />
                             </li>
-                        ))}
+                        ))} */}
                     </ul>
                 </div>
             </div>

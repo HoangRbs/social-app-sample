@@ -20,7 +20,7 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
   }, [onlineUsersId]);
 
   useEffect(() => {
-    const friendId = conversation.members.find((m) => m !== currentUser._id);
+    const friendId = conversation.members.find((m) => m !== currentUser.id);
 
     const getUser = async () => {
       try {

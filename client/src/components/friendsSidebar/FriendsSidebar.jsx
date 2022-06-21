@@ -106,10 +106,10 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
             <div class="sidebar-body" tabindex="3" style = {{ overFlow: 'hidden', outline: 'none' }}>
                 <ul class="list-group list-group-flush">
                     {allFriends.map((o) => (
-                        <li class="list-group-item" data-navigation-target="chats" key={o.id}>
+                        <li class="list-group-item" data-navigation-target="chats" key={o.id} onClick={() => handleClick(o)}>
                             {
                                 onlineUsersId.includes(o.id) ? 
-                                <div onClick={() => handleClick(o)}>
+                                <div>
                                     <figure class="avatar avatar-state-success">
                                         <img 
                                             src={
@@ -123,7 +123,7 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                     </figure>
                                 </div>
                                 : 
-                                <div onClick={() => handleClick(o)}>
+                                <div>
                                     <figure class="avatar">
                                         <img 
                                             src={

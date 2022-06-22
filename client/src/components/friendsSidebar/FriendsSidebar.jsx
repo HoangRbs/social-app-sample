@@ -2,7 +2,6 @@ import axios from "axios";
 import * as React from 'react';
 import { useEffect, useState } from "react";
 import { apiRoutes, axiosHeadersObject } from "../../utils-contants";
-import { currentChatObject } from "../../utils-contants";
 
  // --------------- dropdown menu import components ----------------
 import Menu from '@mui/material/Menu';
@@ -23,22 +22,21 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
         getAllFriends();
     }, [currentId]);
 
-    // click on a online friend to go to conversation
+    // click on a online friend to go to conversation (private chat)
     const handleClick = async (user) => {
         try {
-
             const res = await axios.get(
                 apiRoutes.findAConversation(user.id),
                 axiosHeadersObject()
             );
 
             const conversation = {
-                isPrivateChat: true,
+                is_group: false,
                 userReceiveId: user.id,
                 ...res.data.data
             };
 
-            setCurrentChat(conversation);
+            setCurrentChat({...conversation});
 
         } catch (err) {
             console.log(err);
@@ -106,7 +104,7 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
             <div class="sidebar-body" tabindex="3" style = {{ overFlow: 'hidden', outline: 'none' }}>
                 <ul class="list-group list-group-flush">
                     {allFriends.map((o) => (
-                        <li class="list-group-item" data-navigation-target="chats" key={o.id} onClick={() => handleClick(o)}>
+                        <li class="list-group-item" data-navigation-target="chats" key={o.id} onClick={() => { handleClick(o)}}>
                             {
                                 onlineUsersId.includes(o.id) ? 
                                 <div>

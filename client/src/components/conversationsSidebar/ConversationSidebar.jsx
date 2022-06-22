@@ -3,11 +3,43 @@ import Conversation from "../conversations/Conversation";
 import { Tooltip } from '@mui/material';
 import { navigations } from '../../utils-contants';
 import NewGroupModal from '../../modals/NewGroupModal';
+import axios from "axios";
+import { apiRoutes, axiosHeadersObject } from "../../utils-contants";
 
 export default function ConversationSidebar ({ conversations, currentUser, setCurrentChat, onlineUsersId, setCurrentNavigation }) {
     const [openNewGroupModal, setOpenNewGroupModal] = React.useState(false);
     const handleOpenModal = () => setOpenNewGroupModal(true);
     const handleCloseModal = () => setOpenNewGroupModal(false);
+
+    // click on a conversation to go to a conversation
+    const handleClick = async (conv) => {
+        try {
+            
+            // if private chat
+            if (!conv.is_group) {
+                const res = await axios.get(
+                    apiRoutes.findAConversation(conv.user_id),
+                    axiosHeadersObject()
+                );
+    
+                const conversation = {
+                    is_group: false,
+                    userReceiveId: conv.user_id,
+                    ...res.data.data
+                };
+                
+
+                setCurrentChat({...conversation});
+            
+            } else {
+                // if group chat
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <>
@@ -46,8 +78,8 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                 </form>
                 <div class="sidebar-body" tabindex="2" style={{overflow: "hidden", outline: "none" }}>
                     <ul class="list-group list-group-flush">
-                        {/* {conversations.map((c) => (
-                            <li onClick={() => setCurrentChat(c)} >
+                        {conversations.map((c) => (
+                            <li onClick={() => { handleClick(c) }} >
                                 <Conversation 
                                     conversation={c} 
                                     currentUser={currentUser} 
@@ -55,7 +87,7 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                                     key={c.id} 
                                 />
                             </li>
-                        ))} */}
+                        ))}
                     </ul>
                 </div>
             </div>

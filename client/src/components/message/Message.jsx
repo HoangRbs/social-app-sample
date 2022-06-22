@@ -1,7 +1,7 @@
 
 import { format } from "timeago.js";
 
-export default function Message({ message, own, senderUsername, senderProfilePicture }) {
+export default function Message({ message, messageType, own, senderUsername, senderProfilePicture, messageTime }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   return (
@@ -12,11 +12,11 @@ export default function Message({ message, own, senderUsername, senderProfilePic
           </figure>
           <div>
               <h5>{senderUsername}</h5>
-              <div class="time"> {format(message.createdAt)} </div>
+              <div class="time"> {format(messageTime)} </div>
           </div>
       </div>
       <div class="message-content">
-      {message.text}
+        {message}
       </div>
     </div>
   );

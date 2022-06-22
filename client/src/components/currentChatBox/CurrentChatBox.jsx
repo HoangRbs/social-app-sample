@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Message from "../../components/message/Message";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiRoutes } from "../../utils-contants";
 import VideoCallModal from '../../modals/VideoCallModal';
+import axios from "axios";
+import { axiosHeadersObject } from "../../utils-contants";
 
 export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, membersId, currentChat }) {
     const [membersInBox, setMembersInBox] = useState([]);
-    const [chatBoxName, setChatBoxName] = useState('');
     const [chatBoxImg, setChatBoxImg] = useState('');
 
     // ---------- modal ---------
@@ -16,20 +16,32 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     const handleCloseModal = () => setOpenVideoCallModal(false);
     // ------- ./modal ----------
 
-    useEffect(() => {
-        // const getMembers = async () => {
-        //     // const responses = await Promise.all(membersId.map(id => axios.get(`/users/?userId=${id}`)));
-        //     const responses = await Promise.all(membersId.map(id => axios.get(apiRoutes.getUser(id))));
-        //     const datas = responses.map(res => res.data);
-        
-        //     setMembersInBox(datas);
-        // };
-    
-        // getMembers();
+    // console.log('messages:', messages);
 
-        setChatBoxName(currentChat.conversationName);
+    useEffect(() => {
+
+        // if only 2 members
+        if (!currentChat.is_group) {
+            const get2Members = async () => {
+               
+                const res = await axios.get(apiRoutes.getUser(currentChat.userReceiveId), axiosHeadersObject());
+                const receiver = res.data;
+            
+                setMembersInBox([user, receiver]);      // the current logged in user always at the index 0.
+            };
+
+            get2Members();
+        } else {
+            // group multiple members
+        }
 
     }, [currentChat]);
+
+    // useEffect(() => {
+    //     console.log('members in box: ', membersInBox);
+    //     console.log('length: ', membersInBox.length);
+    // }, [membersInBox])
+
 
     // useEffect(() => {
     //     // if only 2 members
@@ -46,7 +58,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
         // auto scroll to the bottom of chat box
         var elem = document.getElementById('chat-box-content');
         elem.scrollTop = elem.scrollHeight;
-    }, [messages]);
+    }, [messages, currentChat, membersInBox]);
 
     // test useEffect
     // useEffect(() => {
@@ -63,7 +75,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                         <img src={ chatBoxImg } class="rounded-circle" alt="image" />
                     </figure>
                     <div>
-                        <h5>{ chatBoxName }</h5>
+                        <h5>{ currentChat.conversationName }</h5>
                         {/* <small class="text-success">
                             <i>writing...</i>
                         </small> */}
@@ -110,34 +122,33 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                     outline: "none",
                     overflowY: 'auto'
                 }}
+                ref = {scrollRef}
             > 
                 {
                     /* <!-- .no-message --> */
-                    !messages.length ? 
+                    !messages.length || !membersInBox.length ? 
                     <div class="no-message-container">
                         <div class="row mb-5">
-                            {/* <div class="col-md-4 offset-4">
-                                <img src="./dist/media/svg/undraw_empty_xct9.svg" class="img-fluid" alt="image"/>
-                            </div> */}
                         </div>
                         <p class="lead">write a message</p>
                     </div>
                     :
                     <div class="messages">
-                        {messages.map((m) => {
-                            // find the sender with full imformation
-                            // const sender = membersInBox.find(member => member.id === m.sender); 
+                        {messages.map((m, index) => {
+                            if (!m) return <></>;
 
-                            return (               
-                                // <div ref={scrollRef}>
-                                    // <Message 
-                                    //     key={m.sender} 
-                                    //     message={m} 
-                                    //     own={m.sender === user.id} 
-                                    //     senderUsername = {sender?.username}
-                                    //     senderProfilePicture = {sender?.profilePicture}/>
-                                    <></>
-                                // </div> 
+                            const sender = membersInBox.find(member => member?.id === m?.user_sent_id); 
+
+                            return (                    
+                                <Message 
+                                    key={index} 
+                                    message={m?.message}
+                                    messageType = {m?.message_type} 
+                                    own={m?.user_sent_id === user.id} 
+                                    senderUsername = {sender?.user_name}
+                                    senderProfilePicture = {sender?.profile_pic_url}
+                                    messageTime = {m?.message_time}
+                                />    
                             ) 
                         })}
                     </div>

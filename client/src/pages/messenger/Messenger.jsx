@@ -30,37 +30,23 @@ export default function Messenger() {
   const [onlineUsers, setOnlineUsers] = useState([]);   // store online users' ids
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
+  const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
 
   // const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
   useEffect(() => {
-    // socket.current = io("ws://localhost:8900"); // local socket server address 
-
-    // socket.current.on(socketEvents.getMessage, (data) => { // socket server sends message from others to current user
-
-    //   setArrivalMessage({
-    //     sender: data.senderId,
-    //     text: data.text,
-    //     createdAt: Date.now(),
-    //   });
-    // });
-
-    // socket.current.on(socketEvents.getUsers, (users) => {  // get online users currently on socket server
-    //   const currentOnlineUsersId =  users.filter(u => u.userId !== user._id).map(u => u.userId);
-    //   setOnlineUsers(
-    //     currentOnlineUsersId
-    //   );
-    // });
 
     ioClient.socket.get('/subscribe', function (res) {  // connect with socket server
       console.log('connect socket successfully !');
     })
 
-    ioClient.socket.on('/getUsers', function (res) {  // get currently online users
-      console.log(res);
-    })
+    // ioClient.socket.on('/getUsers', function (res) {  // get currently online users
+    //   console.log('online users', res);
+
+    //   setOnlineUsers();
+    // })
 
     ioClient.socket.on('getMessage', function (data) {
       setArrivalMessage(data);
@@ -80,8 +66,12 @@ export default function Messenger() {
   }, [currentChat]);
 
   useEffect(() => {
-    // check for arrival message (real time) and does that message is sent by the user in that conversation
-    setMessages([...messages, arrivalMessage]);   // add arrival message to the current conversation
+    // check for arrival message (real time)
+    // should check if the sender of the arrival message is in the current chat box (since current chat box display messages)
+    if (!currentChat?.is_group && currentChat?.userReceiveId === arrivalMessage?.user_sent_id) {
+      setMessages([...messages, arrivalMessage]);   // add arrival message to the current chat
+    }
+
   }, [arrivalMessage]);
 
   useEffect(() => {
@@ -95,7 +85,7 @@ export default function Messenger() {
     };
 
     getConversations();
-  }, [arrivalMessage, messages]);
+  }, [arrivalMessage]);
 
 
   const handleSubmit = async (e) => {
@@ -160,6 +150,7 @@ export default function Messenger() {
                 onlineUsersId={onlineUsers}
                 currentId={user.id}
                 setCurrentChat={setCurrentChat}
+                setProfileBarActive={setProfileBarActive}
               />
               /* <!-- ./ Friends sidebar --> */
               : <></>

@@ -8,7 +8,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
  // ------------- ./dropdown menu import components ------------------ 
 
-export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentChat }) {
+export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentChat, setProfileBarActive }) {
     const [allFriends, setAllFriends] = useState([]);
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
@@ -104,10 +104,10 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
             <div class="sidebar-body" tabindex="3" style = {{ overFlow: 'hidden', outline: 'none' }}>
                 <ul class="list-group list-group-flush">
                     {allFriends.map((o) => (
-                        <li class="list-group-item" data-navigation-target="chats" key={o.id} onClick={() => { handleClick(o)}}>
+                        <li class="list-group-item" data-navigation-target="chats" key={o.id}>
                             {
                                 onlineUsersId.includes(o.id) ? 
-                                <div>
+                                <div onClick={() => { handleClick(o)}}>
                                     <figure class="avatar avatar-state-success">
                                         <img 
                                             src={
@@ -121,7 +121,7 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                     </figure>
                                 </div>
                                 : 
-                                <div>
+                                <div onClick={() => { handleClick(o)}}>
                                     <figure class="avatar">
                                         <img 
                                             src={
@@ -136,7 +136,7 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                 </div>
                             }
                             <div class="users-list-body">
-                                <div>
+                                <div onClick={() => { handleClick(o)}}>
                                     <h5> {o?.user_name} </h5>
                                 </div>
                                 <div 
@@ -164,7 +164,10 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
                                         'aria-labelledby': 'basic-button',
                                     }}
                                 >
-                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        handleClose();
+                                        setProfileBarActive(true); 
+                                    }}>Profile</MenuItem>
                                 </Menu>
                             </div>
                         </li>

@@ -1,17 +1,38 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiRoutes } from "../../utils-contants";
-import { format } from 'timeago.js';
+import { axiosHeadersObject } from "../../utils-contants";
 
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
 export default function Conversation({ conversation, currentUser, onlineUsersId }) {
-  const [user, setUser] = useState(null);
   const [isConversationOnline, setIsOnline] = useState(false);
+  const [convImg, setConvImg] = useState('');   // get conv img on backend later
 
-  // check if a member in the conversation is online then show online status (for both group and private chat, but disable for now :(( )))
+  // console.log('conversation: ', conversation);
+
   useEffect(() => {
-    // setIsOnline(false);
+    // private chat
+    if (!conversation.is_group) {
+      const getReceiver = async () => {
+        try {
+          const res = await axios.get(apiRoutes.getUser(conversation.user_id), axiosHeadersObject());
+          const receiver = res.data;
+  
+          setConvImg(receiver.profile_pic_url);
+
+        } catch (err) {
+            console.log(err);
+        }
+      }
+
+      getReceiver();
+    }
+  }, []);
+
+  // check if a member in the conversation is online then show online status 
+  useEffect(() => {
+    setIsOnline(false);
 
     // for (let i = 0; i < conversation.members.length; i++) {
     //   if (onlineUsersId.includes(conversation.members[i])) {
@@ -20,32 +41,16 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
     //   }
     // }
 
+    if (!conversation.is_group) {
+      if (onlineUsersId.includes(conversation.user_id)) setIsOnline(true);
+    }
+
   }, [onlineUsersId]);
-
-  // set current user for a box of conversation, just to show info (conv img, conv name), but no need for now
-  // useEffect(() => {
-  //   // const friendId = conversation.members.find((m) => m !== currentUser.id);
-
-  //   // const getUser = async () => {
-  //   //   try {
-  //   //     // const res = await axios("/users?userId=" + friendId);
-  //   //     const res = await axios(apiRoutes.getUser(friendId));
-  //   //     setUser(res.data);
-  //   //   } catch (err) {
-  //   //     console.log(err);
-  //   //   }
-  //   // };
-  //   // getUser();
-  // }, [currentUser, conversation]);
 
   return (
       <div class="list-group-item">
         <figure class = {isConversationOnline ? "avatar avatar-state-success" : "avatar"}>
-            <img src={
-              user?.profilePicture
-                ? user.profilePicture
-                : PF + "person/noAvatar.png"
-            } class="rounded-circle" alt="image" />
+            <img src={ convImg ? convImg : PF + "person/noAvatar.png" } class="rounded-circle" alt="image" />
         </figure>
         <div class="users-list-body">
           <div>
@@ -54,9 +59,7 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
           </div>
           <div class="users-list-action">
               {/* new message count later using notification service */}
-              {/* <div class="new-message-count">3</div>  */}
-              {/* last message created time using notification server */}
-              {/* using timeago.js module ... later */}
+              <div class="new-message-count">3</div> 
               <small class="text-primary">{new Date(conversation.message_time).toLocaleString('en-US', {
                 hour: 'numeric',
                 minute: 'numeric',

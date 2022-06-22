@@ -10,6 +10,8 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     const [membersInBox, setMembersInBox] = useState([]);
     const [chatBoxImg, setChatBoxImg] = useState('');
 
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
     // ---------- modal ---------
     const [openVideoCallModal, setOpenVideoCallModal] = React.useState(false);
     const handleOpenModal = () => setOpenVideoCallModal(true);
@@ -38,12 +40,6 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     }, [currentChat]);
 
     // useEffect(() => {
-    //     console.log('members in box: ', membersInBox);
-    //     console.log('length: ', membersInBox.length);
-    // }, [membersInBox])
-
-
-    // useEffect(() => {
     //     // if only 2 members
     //     // if (membersId.length === 2) {
     //     //     const sender = membersInBox.find(member => member.id !== user.id);
@@ -53,6 +49,12 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     //     //     // if is a group, only show svg vector img with first letter of group name: 'group name'.
     //     // }
     // }, [membersInBox]);
+
+    useEffect(() => {
+        if (!currentChat.is_group) {
+            setChatBoxImg(membersInBox[1]?.profile_pic_url ? membersInBox[1].profile_pic_url : PF + "person/noAvatar.png");
+        }
+    }, [membersInBox])
 
     useEffect(() => {
         // auto scroll to the bottom of chat box

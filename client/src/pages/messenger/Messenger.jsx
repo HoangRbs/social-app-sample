@@ -10,7 +10,7 @@ import axios from "axios";
 import { apiRoutes, axiosHeadersObject, navigations, socketEvents } from '../../utils-contants';
 
 import socketIOClient  from "socket.io-client";
-import * as sailsIOClient from 'sails.io.js'
+import * as sailsIOClient from 'sails.io.js';
 
 let ioClient;
 delete socketIOClient.sails;
@@ -27,7 +27,7 @@ export default function Messenger() {
   const [messages, setMessages] = useState([]);         // messages for current chat box
   const [newMessage, setNewMessage] = useState("");     // new message when typing text box
   const [arrivalMessage, setArrivalMessage] = useState(null);   // arrival message for current chat
-  const [onlineUsers, setOnlineUsers] = useState([]);   // store online users' ids
+  const [onlineUsersId, setOnlineUsersId] = useState([]);   // store online users' ids
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
   const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
@@ -42,11 +42,11 @@ export default function Messenger() {
       console.log('connect socket successfully !');
     })
 
-    // ioClient.socket.on('/getUsers', function (res) {  // get currently online users
-    //   console.log('online users', res);
+    ioClient.socket.on('getUsers', function (res) {  // get currently online users
+      // console.log('online users', res);
 
-    //   setOnlineUsers();
-    // })
+      setOnlineUsersId(res.data);
+    })
 
     ioClient.socket.on('getMessage', function (data) {
       setArrivalMessage(data);
@@ -137,7 +137,7 @@ export default function Messenger() {
                 conversations={conversations} 
                 currentUser = {user} 
                 setCurrentChat = {setCurrentChat} 
-                onlineUsersId = {onlineUsers} 
+                onlineUsersId = {onlineUsersId} 
                 setCurrentNavigation = {setCurrentNavigation}  
               />
               /* <!-- ./ Conversations sidebar --> */
@@ -147,7 +147,7 @@ export default function Messenger() {
               currentNavigation === navigations.onlineFriends ? 
               /* <!-- Friends sidebar --> */
               <FriendsSidebar 
-                onlineUsersId={onlineUsers}
+                onlineUsersId={onlineUsersId}
                 currentId={user.id}
                 setCurrentChat={setCurrentChat}
                 setProfileBarActive={setProfileBarActive}

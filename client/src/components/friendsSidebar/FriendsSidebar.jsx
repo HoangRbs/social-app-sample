@@ -43,32 +43,6 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
         }
     };
 
-    // create a new conversation
-    // const handleNewConversation = async (user) => {
-
-    //     try {
-    //         // const res = await axios.post(
-    //         //     `/conversations`, {
-    //         //     senderId: currentId,
-    //         //     receiverId: user._id 
-    //         //     }
-    //         // );
-
-    //         // const res = await axios.post(
-    //         //     apiRoutes.createNewConversation, {
-    //         //     senderId: currentId,
-    //         //     receiverId: user.id 
-    //         //     }
-    //         // );
-
-    //         // if (res.data) setIsNoMessage({ ...isNoMessage, [user.id]: false }); ; 
-            
-    //         // setCurrentChat(res.data);   
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // };
-
     // ------------- <drop down menu function> -------------
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);

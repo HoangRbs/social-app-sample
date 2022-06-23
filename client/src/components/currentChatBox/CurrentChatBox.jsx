@@ -6,7 +6,7 @@ import VideoCallModal from '../../modals/VideoCallModal';
 import axios from "axios";
 import { axiosHeadersObject } from "../../utils-contants";
 
-export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, membersId, currentChat }) {
+export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, currentChat }) {
     const [membersInBox, setMembersInBox] = useState([]);
     const [chatBoxImg, setChatBoxImg] = useState('');
 

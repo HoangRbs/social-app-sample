@@ -35,7 +35,6 @@ export default function Messenger() {
   const scrollRef = useRef();
 
   useEffect(() => {
-
     delete socketIOClient.sails;
     ioClient = sailsIOClient(socketIOClient);
 
@@ -43,10 +42,8 @@ export default function Messenger() {
     ioClient.sails.useCORSRouteToGetCookie = false;
     ioClient.sails.query = `token=${localStorage.getItem('token')}`;
 
-    
+
     ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
-      console.log(ioClient.sails.query);
-      console.log(res);
       console.log('connect socket successfully !');
       setConnectSocketSuccess(true);
     })
@@ -54,10 +51,7 @@ export default function Messenger() {
   }, []);
 
   useEffect(() => {
-    // console.log('connect successful trigger');
-
     ioClient.socket.on('getUsers', function (res) {  // get currently online users
-      console.log('online users: ', res);
       setOnlineUsersId(res.data);
     })
 
@@ -140,6 +134,7 @@ export default function Messenger() {
           setCurrentNavigation = {setCurrentNavigation} 
           setProfileBarActive = {setProfileBarActive} 
           setProfileBarUserInfo = {setProfileBarUserInfo}
+          currentNavigation = {currentNavigation}
         />
         {/* <!-- ./ navigation --> */}
 
@@ -185,7 +180,6 @@ export default function Messenger() {
               newMessage = {newMessage}
               handleSubmit = {handleSubmit}
               scrollRef = {scrollRef}
-              membersId = {[]}
               currentChat = {currentChat}
             />
           ) : (

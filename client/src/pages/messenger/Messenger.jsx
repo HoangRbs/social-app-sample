@@ -84,7 +84,7 @@ export default function Messenger() {
     };
 
     getConversations();
-  }, [arrivalMessage]);
+  }, [arrivalMessage, messages]);
 
 
   const handleSubmit = async (e) => {

@@ -8,8 +8,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
  // ------------- ./dropdown menu import components ------------------ 
 
-export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentChat, setProfileBarActive }) {
+export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentChat, setProfileBarActive, setProfileBarUserInfo }) {
     const [allFriends, setAllFriends] = useState([]);
+    const [clickedUser, setClickedUser] = useState(null);
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
     useEffect(() => {
@@ -77,78 +78,90 @@ export default function FriendsSidebar ({ onlineUsersId, currentId, setCurrentCh
             </form>
             <div class="sidebar-body" tabindex="3" style = {{ overFlow: 'hidden', outline: 'none' }}>
                 <ul class="list-group list-group-flush">
-                    {allFriends.map((o) => (
-                        <li class="list-group-item" data-navigation-target="chats" key={o.id}>
-                            {
-                                onlineUsersId.includes(o.id) ? 
-                                <div onClick={() => { handleClick(o)}}>
-                                    <figure class="avatar avatar-state-success">
-                                        <img 
-                                            src={
-                                                o?.profile_pic_url
-                                                ? o.profile_pic_url
-                                                : PF + "person/noAvatar.png"
-                                            } 
-                                            class="rounded-circle" 
-                                            alt="image" 
-                                        />
-                                    </figure>
-                                </div>
-                                : 
-                                <div onClick={() => { handleClick(o)}}>
-                                    <figure class="avatar">
-                                        <img 
-                                            src={
-                                                o?.profile_pic_url
-                                                ? o.profile_pic_url
-                                                : PF + "person/noAvatar.png"
-                                            } 
-                                            class="rounded-circle" 
-                                            alt="image" 
-                                        />
-                                    </figure>
-                                </div>
-                            }
-                            <div class="users-list-body">
-                                <div onClick={() => { handleClick(o)}}>
-                                    <h5> {o?.user_name} </h5>
-                                </div>
-                                <div 
-                                    class="users-list-action"
-                                    id="basic-button"
-                                    aria-controls={open ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    onClick={handleOpenMenu}
-                                >    
-                                    <div class="action-toggle">   
-                                        <div class="dropdown">
-                                            <a href="#">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                            </a>
+                    {allFriends.map((o) => {
+
+                        return (
+                            <li class="list-group-item" data-navigation-target="chats" key={o.id}>
+                                {
+                                    onlineUsersId.includes(o.id) ? 
+                                    <div onClick={() => { handleClick(o)}}>
+                                        <figure class="avatar avatar-state-success">
+                                            <img 
+                                                src={
+                                                    o?.profile_pic_url
+                                                    ? o.profile_pic_url
+                                                    : PF + "person/noAvatar.png"
+                                                } 
+                                                class="rounded-circle" 
+                                                alt="image" 
+                                            />
+                                        </figure>
+                                    </div>
+                                    : 
+                                    <div onClick={() => { handleClick(o) }}>
+                                        <figure class="avatar">
+                                            <img 
+                                                src={
+                                                    o?.profile_pic_url
+                                                    ? o.profile_pic_url
+                                                    : PF + "person/noAvatar.png"
+                                                } 
+                                                class="rounded-circle" 
+                                                alt="image" 
+                                            />
+                                        </figure>
+                                    </div>
+                                }
+                                <div class="users-list-body">
+                                    <div onClick={() => {
+                                        handleClick(o);
+                                    }}>
+                                        <h5> {o?.user_name} </h5>
+                                    </div>
+                                    <div 
+                                        class="users-list-action"
+                                        id="basic-button"
+                                        aria-controls={open ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={(e) => {
+                                            handleOpenMenu(e);
+                                            setClickedUser(o);
+                                        }}
+                                    >    
+                                        <div class="action-toggle">   
+                                            <div class="dropdown">
+                                                <a href="#">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        <MenuItem onClick={() => {
+                                            handleClose();
+                                            setProfileBarActive(true); 
+                                            setProfileBarUserInfo(clickedUser);
+                                        }}> 
+                                            Profile
+                                        </MenuItem>
+                                    </Menu>
                                 </div>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleClose}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                >
-                                    <MenuItem onClick={() => {
-                                        handleClose();
-                                        setProfileBarActive(true); 
-                                    }}>Profile</MenuItem>
-                                </Menu>
-                            </div>
-                        </li>
-                    ))}
-
+                            </li>
+                        ) 
+                    })}
                 </ul>
             </div>
         </div>
     );
 }
+
+

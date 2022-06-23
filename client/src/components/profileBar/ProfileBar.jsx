@@ -20,14 +20,15 @@ export default function ProfileBar ({user, isProfileBarActive, setProfileBarActi
                         <div class="text-center">
                             <figure class="avatar avatar-xl mb-4">
                                 <img src={
-                                    user.profile_pic_url
-                                        ? user.profile_pic_url
+                                    user?.profile_pic_url
+                                        ? user?.profile_pic_url
                                         : PF + "person/noAvatar.png"
                                     } 
                                     
-                                    class="rounded-circle" alt="image" />
+                                    class="rounded-circle" alt="image" 
+                                />
                             </figure>
-                            <h5 class="mb-1">{ user.username }</h5>
+                            <h5 class="mb-1">{ user?.user_name }</h5>
                             {/* <small class="text-muted font-italic">Last seen: Today</small> */}
 
                             <ul class="nav nav-tabs justify-content-center mt-5" id="myTab" role="tablist">

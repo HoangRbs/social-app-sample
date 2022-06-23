@@ -13,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 // ------------- ./dropdown menu import components ------------------
 
-export default function Navigation({user, setCurrentNavigation, setProfileBarActive}) {
+export default function Navigation({user, setCurrentNavigation, setProfileBarActive, setProfileBarUserInfo}) {
 
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
     
@@ -157,6 +157,7 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                                             onKeyDown={handleListKeyDown}
                                         >
                                             <MenuItem onClick={(event) => {
+                                                setProfileBarUserInfo(user);
                                                 setProfileBarActive(true);
                                                 handleClose(event);; 
                                             }}>

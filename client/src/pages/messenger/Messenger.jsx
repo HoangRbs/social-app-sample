@@ -44,7 +44,6 @@ export default function Messenger() {
 
     ioClient.socket.on('getUsers', function (res) {  // get currently online users
       // console.log('online users', res);
-
       setOnlineUsersId(res.data);
     })
 
@@ -123,7 +122,12 @@ export default function Messenger() {
       <div class="layout">
 
         {/* <!-- navigation --> */}
-        <Navigation user = {user} setCurrentNavigation = {setCurrentNavigation} setProfileBarActive = {setProfileBarActive}/>
+        <Navigation 
+          user = {user} 
+          setCurrentNavigation = {setCurrentNavigation} 
+          setProfileBarActive = {setProfileBarActive} 
+          setProfileBarUserInfo = {setProfileBarUserInfo}
+        />
         {/* <!-- ./ navigation --> */}
 
         {/* <!-- content --> */}
@@ -151,6 +155,7 @@ export default function Messenger() {
                 currentId={user.id}
                 setCurrentChat={setCurrentChat}
                 setProfileBarActive={setProfileBarActive}
+                setProfileBarUserInfo = {setProfileBarUserInfo}
               />
               /* <!-- ./ Friends sidebar --> */
               : <></>
@@ -179,7 +184,7 @@ export default function Messenger() {
 
           {/* <!-- profile bar --> */}
           <ProfileBar 
-            user={user} 
+            user={profileBarUserInfo} 
             isProfileBarActive = {isProfileBarActive} 
             setProfileBarActive = {setProfileBarActive} 
           />

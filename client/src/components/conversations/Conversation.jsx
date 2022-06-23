@@ -48,19 +48,19 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
   }, [onlineUsersId]);
 
   return (
-      <div class="list-group-item">
-        <figure class = {isConversationOnline ? "avatar avatar-state-success" : "avatar"}>
-            <img src={ convImg ? convImg : PF + "person/noAvatar.png" } class="rounded-circle" alt="image" />
+      <div className="list-group-item">
+        <figure className = {isConversationOnline ? "avatar avatar-state-success" : "avatar"}>
+            <img src={ convImg ? convImg : PF + "person/noAvatar.png" } className="rounded-circle" alt="image" />
         </figure>
-        <div class="users-list-body">
+        <div className="users-list-body">
           <div>
-              <h5 class="text-primary">{conversation.conversation_name}</h5>
+              <h5 className="text-primary">{conversation.conversation_name}</h5>
               <p>{conversation.last_message}</p>
           </div>
-          <div class="users-list-action">
+          <div className="users-list-action">
               {/* new message count later using notification service */}
-              <div class="new-message-count">3</div> 
-              <small class="text-primary">{new Date(conversation.message_time).toLocaleString('en-US', {
+              <div className="new-message-count">3</div> 
+              <small className="text-primary">{new Date(conversation.message_time).toLocaleString('en-US', {
                 hour: 'numeric',
                 minute: 'numeric',
                 hour12: true,

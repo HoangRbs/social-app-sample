@@ -4,22 +4,20 @@ import FriendsSidebar from "../../components/friendsSidebar/FriendsSidebar";
 import ProfileBar from "../../components/profileBar/ProfileBar";
 import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState , useCallback} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { apiRoutes, axiosHeadersObject, navigations, socketEvents } from '../../utils-contants';
 
+// ------------------ socket ----------------------
 import socketIOClient  from "socket.io-client";
 import * as sailsIOClient from 'sails.io.js';
 
+// ----------------- ./socket ---------------------
+
+// ------------------- socket -------------------------------
 let ioClient;
-delete socketIOClient.sails;
-ioClient = sailsIOClient(socketIOClient);
-
-ioClient.sails.url = "http://localhost:6002";
-ioClient.sails.useCORSRouteToGetCookie = false;
-ioClient.sails.query = `token=${localStorage.getItem('token')}`;
-
+// -------------------- ./socket ----------------------------
 
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
@@ -31,27 +29,42 @@ export default function Messenger() {
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
   const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
+  const [connectSocketSuccess, setConnectSocketSuccess] = useState(false);
 
-  // const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
   useEffect(() => {
 
-    ioClient.socket.get('/subscribe', function (res) {  // connect with socket server
+    delete socketIOClient.sails;
+    ioClient = sailsIOClient(socketIOClient);
+
+    ioClient.sails.url = "http://localhost:6002";
+    ioClient.sails.useCORSRouteToGetCookie = false;
+    ioClient.sails.query = `token=${localStorage.getItem('token')}`;
+
+    
+    ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
+      console.log(ioClient.sails.query);
+      console.log(res);
       console.log('connect socket successfully !');
+      setConnectSocketSuccess(true);
     })
 
+  }, []);
+
+  useEffect(() => {
+    // console.log('connect successful trigger');
+
     ioClient.socket.on('getUsers', function (res) {  // get currently online users
-      // console.log('online users', res);
+      console.log('online users: ', res);
       setOnlineUsersId(res.data);
     })
 
     ioClient.socket.on('getMessage', function (data) {
       setArrivalMessage(data);
     })
-
-  }, []);
+  }, [connectSocketSuccess]);
 
 
   // after choosing a current chat, set messages of that current chat
@@ -101,7 +114,7 @@ export default function Messenger() {
       };
   
       ioClient.socket.get('/send', {...sendMessage}, function (res) {
-        setMessages([...messages, res.message]); // reverse later
+        setMessages([...messages, res.data]); // reverse later
       })
 
     } else {
@@ -119,7 +132,7 @@ export default function Messenger() {
     
     <body>
       {/* <!-- layout --> */}
-      <div class="layout">
+      <div className ="layout">
 
         {/* <!-- navigation --> */}
         <Navigation 
@@ -131,9 +144,9 @@ export default function Messenger() {
         {/* <!-- ./ navigation --> */}
 
         {/* <!-- content --> */}
-        <div class="content">
+        <div className ="content">
           {/* <!-- sidebar group --> */}
-          <div class="sidebar-group">
+          <div className ="sidebar-group">
             {
               currentNavigation === navigations.conversations ? 
               // <!-- Conversations sidebar --> 

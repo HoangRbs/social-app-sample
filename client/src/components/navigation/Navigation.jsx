@@ -55,10 +55,10 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
   return (
     <>
         <EditProfileModal open = {openEditProfileModal} handleOpen = {handleOpenModal} handleClose = {handleCloseModal} />
-        <nav class="navigation">
-            <div class="nav-group">
+        <nav className ="navigation">
+            <div className ="nav-group">
                 <ul>
-                    <li class="logo">
+                    <li className ="logo">
                         <a href=''>
                             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="612px" height="612px" viewBox="0 0 612 612" style= {{enableBackground: "new 0 0 612 612" }} xmlSpace="preserve">
                                 <g>
@@ -95,18 +95,18 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                     
                     <li onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.conversations) }}>
                         <Tooltip title={<span style={{  fontSize: '14px' }}>Conversations</span>} placement="right">
-                            <a class="active" data-navigation-target="chats" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Chats">
-                                <span class="badge badge-warning"></span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            <a className ="active" data-navigation-target="chats" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Chats">
+                                <span className ="badge badge-warning"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                             </a>
                         </Tooltip>
                     </li>
                     
-                    <li class="brackets" onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.onlineFriends) }}>
+                    <li className ="brackets" onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.onlineFriends) }}>
                         <Tooltip title={<span style={{  fontSize: '14px' }}>Online Friends</span>} placement="right">
                             <a data-navigation-target="friends" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Friends">
-                                <span class="badge badge-danger"></span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <span className ="badge badge-danger"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             </a>
                         </Tooltip>
                     </li>
@@ -123,13 +123,13 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                                 aria-haspopup="true"
                                 onClick={handleToggle}
                             >
-                                <figure class="avatar">
+                                <figure className ="avatar">
                                     <img src={
                                         user.profile_pic_url
                                             ? user.profile_pic_url
                                             : PF + "person/noAvatar.png"
                                         } 
-                                        class="rounded-circle" alt="image" 
+                                        className ="rounded-circle" alt="image" 
                                     />
                                 </figure>
                             </a>

@@ -19,21 +19,21 @@ export default function Login() {
   };
 
   return (
-    // <div className="login">
-    //   <div className="loginWrapper">
-    //     <div className="loginLeft">
-    //       <h3 className="loginLogo">Hoang cute social</h3>
-    //       <span className="loginDesc">
+    // <div className Name="login">
+    //   <div className Name="loginWrapper">
+    //     <div className Name="loginLeft">
+    //       <h3 className Name="loginLogo">Hoang cute social</h3>
+    //       <span className Name="loginDesc">
     //         Connect with friends and the world around you on Lamasocial.
     //       </span>
     //     </div>
-    //     <div className="loginRight">
-    //       <form className="loginBox" onSubmit={handleClick}>
+    //     <div className Name="loginRight">
+    //       <form className Name="loginBox" onSubmit={handleClick}>
     //         <input
     //           placeholder="Email"
     //           type="email"
     //           required
-    //           className="loginInput"
+    //           className Name="loginInput"
     //           ref={email}
     //         />
     //         <input
@@ -41,18 +41,18 @@ export default function Login() {
     //           type="password"
     //           required
     //           minLength="6"
-    //           className="loginInput"
+    //           className Name="loginInput"
     //           ref={password}
     //         />
-    //         <button className="loginButton" type="submit" disabled={isFetching}>
+    //         <button className Name="loginButton" type="submit" disabled={isFetching}>
     //           {isFetching ? (
     //             <CircularProgress color="white" size="20px" />
     //           ) : (
     //             "Log In"
     //           )}
     //         </button>
-    //         <span className="loginForgot">Forgot Password?</span>
-    //         <button type="button" className="loginRegisterButton" onClick={() => { history.push("/"); }}>
+    //         <span className Name="loginForgot">Forgot Password?</span>
+    //         <button type="button" className Name="loginRegisterButton" onClick={() => { history.push("/"); }}>
     //           {isFetching ? (
     //             <CircularProgress color="white" size="20px" />
     //           ) : (
@@ -64,9 +64,9 @@ export default function Login() {
     //   </div>
     // </div>
 
-    <body class="form-membership">
-      <div class="form-wrapper">
-          <div class="logo">
+    <body className ="form-membership">
+      <div className ="form-wrapper">
+          <div className ="logo">
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="612px" height="612px" viewBox="0 0 612 612" style={{enableBackground: "new 0 0 612 612;"}} xmlSpace="preserve">
                   <g>
                       <g id="_x32__26_">
@@ -100,20 +100,20 @@ export default function Login() {
           </div>
           <h5>Sign in</h5>
           <form onSubmit={handleClick}>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Email" required autofocus ref={email}/>
+            <div className ="form-group">
+                <input type="text" className ="form-control" placeholder="Email" required autofocus ref={email}/>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" required minLength="6"  ref={password}/>
+            <div className ="form-group">
+                <input type="password" className ="form-control" placeholder="Password" required minLength="6"  ref={password}/>
             </div>
-            <div class="form-group d-flex justify-content-between">
-              <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" checked="" id="customCheck1"/>
-                  <label class="custom-control-label" for="customCheck1">Remember me</label>
+            <div className ="form-group d-flex justify-content-between">
+              <div className ="custom-control custom-checkbox">
+                  <input type="checkbox" className ="custom-control-input" checked="" id="customCheck1"/>
+                  <label className ="custom-control-label" for="customCheck1">Remember me</label>
               </div>
               <a href="./reset-password.html">Reset password</a>
             </div>
-            <button class="btn btn-primary btn-block" type="submit" disabled={isFetching}>
+            <button className ="btn btn-primary btn-block" type="submit" disabled={isFetching}>
               {isFetching ? (
                 <CircularProgress color="white" size="20px" />
               ) : (
@@ -121,8 +121,8 @@ export default function Login() {
               )}
             </button>
             <hr/>
-            <p class="text-muted">Don't have an account?</p>
-            <button class="btn btn-outline-light btn-sm" onClick={() => { history.push("/"); }}>
+            <p className ="text-muted">Don't have an account?</p>
+            <button className ="btn btn-outline-light btn-sm" onClick={() => { history.push("/"); }}>
               {isFetching ? (
                 <CircularProgress color="white" size="20px" />
               ) : (

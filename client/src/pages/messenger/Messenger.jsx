@@ -35,6 +35,7 @@ export default function Messenger() {
   const scrollRef = useRef();
 
   useEffect(() => {
+
     delete socketIOClient.sails;
     ioClient = sailsIOClient(socketIOClient);
 
@@ -42,8 +43,8 @@ export default function Messenger() {
     ioClient.sails.useCORSRouteToGetCookie = false;
     ioClient.sails.query = `token=${localStorage.getItem('token')}`;
 
-
     ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
+      console.log(res);
       console.log('connect socket successfully !');
       setConnectSocketSuccess(true);
     })
@@ -51,13 +52,21 @@ export default function Messenger() {
   }, []);
 
   useEffect(() => {
-    ioClient.socket.on('getUsers', function (res) {  // get currently online users
-      setOnlineUsersId(res.data);
-    })
+    if (connectSocketSuccess) {
 
-    ioClient.socket.on('getMessage', function (data) {
-      setArrivalMessage(data);
-    })
+      ioClient.socket.on('getUsers', function (res) {  // get currently online users
+        // console.log('online: ', res.data);
+        setOnlineUsersId(res.data);
+      })
+  
+      ioClient.socket.on('getMessage', function (res) {
+        // console.log('arrival message !: ', res);
+        setArrivalMessage(res);
+      })
+    }
+
+    setConnectSocketSuccess(false);
+
   }, [connectSocketSuccess]);
 
 
@@ -99,7 +108,7 @@ export default function Messenger() {
 
     // send private chat message (not a group)
     if (!currentChat.is_group) {
-      console.log('does this trigger ?')
+      // console.log('does this trigger ?')
 
       const sendMessage = {
         message: newMessage,

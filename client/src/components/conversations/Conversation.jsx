@@ -59,7 +59,7 @@ export default function Conversation({ conversation, currentUser, onlineUsersId 
           </div>
           <div className="users-list-action">
               {/* new message count later using notification service */}
-              <div className="new-message-count">3</div> 
+              {/* <div className="new-message-count">3</div>  */}
               <small className="text-primary">{new Date(conversation.message_time).toLocaleString('en-US', {
                 hour: 'numeric',
                 minute: 'numeric',

@@ -3,6 +3,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { VideoSocketContext } from '../context/VideoSocketContext';
+import { useContext } from "react";
 
 import { Grid, Paper, makeStyles } from '@material-ui/core';
 
@@ -40,15 +42,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function VideoCallModal({ open, handleOpen, handleClose }) {
 
-  const classes = useStyles();
-
-  const stream = true;
-  const callAccepted = true;
-  const callEnded = true;
-  const name = 'random';
+  // const { name, callAccepted, myVideo, userVideo, callEnded, stream, call } = useContext(VideoSocketContext);
+  const name = '';
+  const callAccepted = '';
   const myVideo = '';
-  const call = '';
   const userVideo = '';
+  const callEnded = '';
+  const stream = '';
+  const call = '';
+
+  const classes = useStyles();
 
   return (
     <div>
@@ -58,7 +61,7 @@ export default function VideoCallModal({ open, handleOpen, handleClose }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        {/* <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Text in a modal
             place video component here
@@ -66,9 +69,9 @@ export default function VideoCallModal({ open, handleOpen, handleClose }) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
           </Typography>
-        </Box>
+        </Box> */}
 
-        {/* <Grid container className={classes.gridContainer}>
+        <Grid container className={classes.gridContainer}>
           {stream && (
             <Paper className={classes.paper}>
               <Grid item xs={12} md={6}>
@@ -76,7 +79,7 @@ export default function VideoCallModal({ open, handleOpen, handleClose }) {
                 <video 
                   playsInline 
                   muted 
-                  // ref={myVideo} 
+                  ref={myVideo} 
                   autoPlay 
                   className={classes.video} />
               </Grid>
@@ -88,13 +91,13 @@ export default function VideoCallModal({ open, handleOpen, handleClose }) {
                 <Typography variant="h5" gutterBottom>{call.name || 'Name'}</Typography>
                 <video 
                   playsInline 
-                  // ref={userVideo} 
+                  ref={userVideo} 
                   autoPlay 
                   className={classes.video} />
               </Grid>
             </Paper>
           )}
-        </Grid> */}
+        </Grid>
 
       </Modal>
     </div>

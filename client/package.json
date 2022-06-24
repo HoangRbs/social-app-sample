@@ -19,7 +19,8 @@
     "socket.io-client": "^1.7.4",
     "timeago.js": "^4.0.2",
     "web-vitals": "^1.0.1",
-    "sails.io.js": "^1.2.1"
+    "sails.io.js": "^1.2.1",
+    "simple-peer": "^9.10.0"
   },
   "scripts": {
     "start": "react-scripts start",

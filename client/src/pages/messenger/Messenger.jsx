@@ -29,10 +29,12 @@ export default function Messenger() {
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
   const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
-  const [connectSocketSuccess, setConnectSocketSuccess] = useState(false);
+  // const [connectSocketSuccess, setConnectSocketSuccess] = useState(false);
 
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
+
+  const runOneTime = true;
 
   useEffect(() => {
 
@@ -46,14 +48,9 @@ export default function Messenger() {
     ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
       console.log(res);
       console.log('connect socket successfully !');
-      setConnectSocketSuccess(true);
     })
 
-  }, []);
-
-  useEffect(() => {
-    if (connectSocketSuccess) {
-
+    if (runOneTime) {
       ioClient.socket.on('getUsers', function (res) {  // get currently online users
         // console.log('online: ', res.data);
         setOnlineUsersId(res.data);
@@ -63,11 +60,13 @@ export default function Messenger() {
         // console.log('arrival message !: ', res);
         setArrivalMessage(res);
       })
+
+      runOneTime = false;
     }
 
-    setConnectSocketSuccess(false);
+  }, []);
 
-  }, [connectSocketSuccess]);
+
 
 
   // after choosing a current chat, set messages of that current chat

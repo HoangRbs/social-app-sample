@@ -8,7 +8,7 @@ export const VideoSocketContext = createContext();
 // const socket = io('https://warm-wildwood-81069.herokuapp.com');
 // connect to socket
 
-export const ContextProvider = ({ children }) => {
+export const VideoSocketContextProvider = ({ children }) => {
 //   const [callAccepted, setCallAccepted] = useState(false);
 //   const [callEnded, setCallEnded] = useState(false);
 //   const [stream, setStream] = useState();

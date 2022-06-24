@@ -55,10 +55,19 @@ export default function Messenger() {
         // console.log('online: ', res.data);
         setOnlineUsersId(res.data);
       })
+
+      ioClient.socket.on('updateMessage', function(res) {
+        console.log('udpate message', res);
+      })
   
       ioClient.socket.on('getMessage', function (res) {
-        // console.log('arrival message !: ', res);
+        console.log('arrival message !: ', res);
+
         setArrivalMessage(res);
+
+        if (res.message_type != 'call') {
+          ioClient.socket.get('/update-message', { id: res.id, status: 'delivered' }, function (d) {})
+        }
       })
 
       runOneTime = false;

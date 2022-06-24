@@ -34,7 +34,7 @@ export default function Messenger() {
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
-  const runOneTime = true;
+  let runOneTime = true;
 
   useEffect(() => {
 

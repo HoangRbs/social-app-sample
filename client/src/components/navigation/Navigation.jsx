@@ -96,7 +96,7 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                     <li onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.conversations) }}>
                         <Tooltip title={<span style={{  fontSize: '14px' }}>Conversations</span>} placement="right">
                             <a className = {currentNavigation === navigations.conversations ? 'active' : ''} data-navigation-target="chats" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Chats">
-                                <span className ="badge badge-warning"></span>
+                                {/* <span className ="badge badge-warning"></span> */}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                             </a>
                         </Tooltip>
@@ -105,7 +105,7 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
                     <li className ="brackets" onClick = {(e) => { e.preventDefault(); setCurrentNavigation(navigations.onlineFriends) }}>
                         <Tooltip title={<span style={{  fontSize: '14px' }}>Online Friends</span>} placement="right">
                             <a className = {currentNavigation === navigations.onlineFriends ? 'active' : ''} data-navigation-target="friends" href="" data-toggle="tooltip" title="" data-placement="right" data-original-title="Friends">
-                                <span className ="badge badge-danger"></span>
+                                {/* <span className ="badge badge-danger"></span> */}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             </a>
                         </Tooltip>

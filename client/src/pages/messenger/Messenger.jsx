@@ -136,7 +136,7 @@ export default function Messenger() {
     // send private chat message (not a group)
     if (!currentChat.is_group) {
       // console.log('does this trigger ?')
-      if (newMessage ) return;
+      if (newMessage.match(/^\s+$/) || !newMessage) return;
 
       const sendMessage = {
         message: newMessage,
@@ -155,6 +155,33 @@ export default function Messenger() {
 
     setNewMessage("");
   };
+
+  useEffect(() => {
+    // upload image :')
+    if (newMessage?.type === 'image') {
+      // send private chat message (not a group)
+      if (!currentChat.is_group) {
+
+        const sendMessage = {
+          message: newMessage.url,
+          recvId: currentChat.userReceiveId,
+          msg_type: "image_url" 
+        };
+
+        // console.log(sendMessage);
+    
+        ioClient.socket.get('/send', {...sendMessage}, function (res) {
+          // console.log('image', res);
+          setMessages([...messages, res.data]);
+        })
+
+      } else {
+
+      }
+    }
+
+    setNewMessage('');
+  }, [newMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });

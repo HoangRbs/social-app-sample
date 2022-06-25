@@ -18,7 +18,15 @@ export default function Message({ message, messageType, own, senderUsername, sen
             </div>
         </div>
         <div className ="message-content">
-          {message}
+          {messageType !== 'image_url' ? 
+            message : 
+            <img src={message} 
+                 style = {{
+                  height: '250px',
+                  width: '100%',
+                  objectFit: 'cover'
+                 }} 
+            />}
         </div>
         {
             isLastMessSent && isLastMessDelivered ? <CheckCircle fontSize="small" color='primary' /> : 

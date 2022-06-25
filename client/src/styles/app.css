@@ -5912,14 +5912,14 @@ a.btn:hover[href="#previous"] {
 }
 
 .btn.btn-light {
-    background: #e6e6e6;
-    border-color: #e6e6e6
+    background: #b8b4b4;
+    border-color: #cfcaca
 }
 
 .btn.btn-light:not(:disabled):not(.disabled):active,
 .btn.btn-light:not(:disabled):not(.disabled):focus,
 .btn.btn-light:not(:disabled):not(.disabled):hover {
-    background: #c8c8c8;
+    background: #a8a7a7;
     border-color: #c8c8c8
 }
 

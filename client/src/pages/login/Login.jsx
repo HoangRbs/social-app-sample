@@ -122,7 +122,7 @@ export default function Login() {
             </button>
             <hr/>
             <p className ="text-muted">Don't have an account?</p>
-            <button className ="btn btn-outline-light btn-sm" onClick={() => { history.push("/"); }}>
+            <button className ="btn btn-outline-light btn-sm" onClick={() => { history.push("/register"); }}>
               {isFetching ? (
                 <CircularProgress color="white" size="20px" />
               ) : (

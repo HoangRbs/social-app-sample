@@ -78,12 +78,13 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                 </form>
                 <div className ="sidebar-body" tabIndex="2" style={{overflow: "hidden", outline: "none" }}>
                     <ul className ="list-group list-group-flush">
-                        {conversations.map((c) => (
-                            <li onClick={() => { handleClick(c) }} key={c.id}>
+                        {conversations.map((c, index) => (
+                            <li onClick={() => { handleClick(c) }} key={index}>
                                 <Conversation 
                                     conversation={c} 
                                     currentUser={currentUser} 
                                     onlineUsersId = {onlineUsersId}
+                                    key={index}
                                 />
                             </li>
                         ))}

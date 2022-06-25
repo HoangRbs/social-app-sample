@@ -29,9 +29,12 @@ export default function Messenger() {
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
   const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
+  // const [connectSocketSucess, setConnectSocketSuccess] = useState(false);
   const [deliveredMessage, setDeliveredMessage] = useState(null);  
   // last message delivered by current logged in user so basicly we'll still have to use message id :)
   // search id from last to first for faster finding
+
+  const [messagesQueue, setMessagesQueue] = useState([]);   // for potato machine like macos :V
 
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
@@ -47,11 +50,6 @@ export default function Messenger() {
     ioClient.sails.useCORSRouteToGetCookie = false;
     ioClient.sails.query = `token=${localStorage.getItem('token')}`;
 
-    ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
-      console.log(res);
-      console.log('connect socket successfully !');
-    })
-
     if (runOneTime) {
       ioClient.socket.on('getUsers', function (res) {  // get currently online users
         // console.log('online: ', res.data);
@@ -59,26 +57,40 @@ export default function Messenger() {
       })
 
       ioClient.socket.on('updateMessage', function(res) {
-        console.log('update message', res);
+        // console.log('update message', res);
         setDeliveredMessage(res);
       })
   
       ioClient.socket.on('getMessage', function (res) {
-        console.log('arrival message !: ', res);
+        // console.log('arrival message !: ', res);
 
         setArrivalMessage(res);
-
-        if (res.message_type != 'call') {
-          ioClient.socket.get('/update-message', { id: res.id, status: 'delivered' }, function (d) {})
-        }
+        setMessagesQueue([...messagesQueue, res]); // push
       })
 
       runOneTime = false;
     }
 
+    ioClient.socket.get('/subscribe', function (res) {  // connect to socket server realtime
+      // if (res.status === 'success') setConnectSocketSuccess(true);
+      console.log(res);
+      console.log('connect socket successfully !');
+    })
+
   }, []);
 
 
+  // for potato machine like macos :V
+  useEffect(() => {
+    if (messagesQueue.length > 0) {
+      console.log('queue: ', messagesQueue);
+      const res = messagesQueue.shift(); // pop
+
+      if (res.message_type != 'call') {
+        ioClient.socket.get('/update-message', { id: res.id, status: 'delivered' }, function (d) {})
+      }
+    }
+  }, [messagesQueue]);
 
 
   // after choosing a current chat, set messages of that current chat
@@ -128,8 +140,8 @@ export default function Messenger() {
       };
   
       ioClient.socket.get('/send', {...sendMessage}, function (res) {
-        console.log(res.data);
-        setMessages([...messages, res.data]); // reverse later
+        // console.log(res.data);
+        setMessages([...messages, res.data]);
       })
 
     } else {

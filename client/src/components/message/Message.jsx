@@ -1,6 +1,6 @@
 
 import { format } from "timeago.js";
-import { CheckCircle, CheckCircleTwoTone } from '@material-ui/icons';
+import { CheckCircle, CheckCircleOutline } from '@material-ui/icons';
 
 export default function Message({ message, messageType, own, senderUsername, senderProfilePicture, messageTime, isLastMessSent, isLastMessDelivered }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -22,7 +22,7 @@ export default function Message({ message, messageType, own, senderUsername, sen
         </div>
         {
             isLastMessSent && isLastMessDelivered ? <CheckCircle fontSize="small" color='primary' /> : 
-            isLastMessSent ? <CheckCircleTwoTone fontSize="small" /> : <></>
+            isLastMessSent ? <CheckCircleOutline fontSize="small" /> : <></>
         }
       </div>
     </>

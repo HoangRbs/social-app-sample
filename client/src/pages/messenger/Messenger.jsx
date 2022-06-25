@@ -29,7 +29,9 @@ export default function Messenger() {
   const [currentNavigation, setCurrentNavigation] = useState(navigations.conversations);
   const [isProfileBarActive, setProfileBarActive] = useState(false);
   const [profileBarUserInfo, setProfileBarUserInfo] = useState(null);
-  // const [connectSocketSuccess, setConnectSocketSuccess] = useState(false);
+  const [deliveredMessage, setDeliveredMessage] = useState(null);  
+  // last message delivered by current logged in user so basicly we'll still have to use message id :)
+  // search id from last to first for faster finding
 
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
@@ -57,7 +59,8 @@ export default function Messenger() {
       })
 
       ioClient.socket.on('updateMessage', function(res) {
-        console.log('udpate message', res);
+        console.log('update message', res);
+        setDeliveredMessage(res);
       })
   
       ioClient.socket.on('getMessage', function (res) {
@@ -125,6 +128,7 @@ export default function Messenger() {
       };
   
       ioClient.socket.get('/send', {...sendMessage}, function (res) {
+        console.log(res.data);
         setMessages([...messages, res.data]); // reverse later
       })
 
@@ -198,6 +202,7 @@ export default function Messenger() {
               handleSubmit = {handleSubmit}
               scrollRef = {scrollRef}
               currentChat = {currentChat}
+              deliveredMessage = {deliveredMessage}
             />
           ) : (
             <span style = {{ margin: 'auto', textAlign: 'center', fontSize: '25px' }}>

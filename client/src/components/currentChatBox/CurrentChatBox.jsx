@@ -6,7 +6,7 @@ import VideoCallModal from '../../modals/VideoCallModal';
 import axios from "axios";
 import { axiosHeadersObject } from "../../utils-contants";
 
-export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, currentChat }) {
+export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, currentChat, deliveredMessage }) {
     const [membersInBox, setMembersInBox] = useState([]);
     const [chatBoxImg, setChatBoxImg] = useState('');
 
@@ -139,7 +139,10 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                         {messages.map((m, index) => {
                             if (!m) return <></>;
 
-                            const sender = membersInBox.find(member => member?.id === m?.user_sent_id); 
+                            const sender = membersInBox.find(member => member?.id === m?.user_sent_id);
+                            // for testing 
+                            const isLastMessSentByCurrentUser = m?.id === deliveredMessage?.id;
+                            const isLastMessDelivered = deliveredMessage?.status === 'delivered';
 
                             return (                    
                                 <Message 
@@ -150,6 +153,8 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                                     senderUsername = {sender?.user_name}
                                     senderProfilePicture = {sender?.profile_pic_url}
                                     messageTime = {m?.message_time}
+                                    isLastMessSent = {isLastMessSentByCurrentUser}
+                                    isLastMessDelivered = {isLastMessDelivered}
                                 />    
                             ) 
                         })}

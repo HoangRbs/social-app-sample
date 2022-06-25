@@ -40,6 +40,7 @@ export default function Messenger() {
   const scrollRef = useRef();
 
   let runOneTime = true;
+  let isMessageQueueDone = true;   // for potato machine like macos :V
 
   useEffect(() => {
 
@@ -82,13 +83,16 @@ export default function Messenger() {
 
   // for potato machine like macos :V
   useEffect(() => {
-    if (messagesQueue.length > 0) {
-      console.log('queue: ', messagesQueue);
+    if (messagesQueue.length > 0 && isMessageQueueDone) {
+      isMessageQueueDone = false;     // block other messages in queue
       const res = messagesQueue.shift(); // pop
-
+      
       if (res.message_type != 'call') {
-        ioClient.socket.get('/update-message', { id: res.id, status: 'delivered' }, function (d) {})
+        ioClient.socket.get('/update-message', { id: res.id, status: 'delivered', user_sent_id: res.user_sent_id }, function (d) {
+          isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
+        })
       }
+      
     }
   }, [messagesQueue]);
 
@@ -132,6 +136,7 @@ export default function Messenger() {
     // send private chat message (not a group)
     if (!currentChat.is_group) {
       // console.log('does this trigger ?')
+      if (newMessage ) return;
 
       const sendMessage = {
         message: newMessage,

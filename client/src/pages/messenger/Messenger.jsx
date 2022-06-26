@@ -89,6 +89,7 @@ export default function Messenger() {
       
       if (res.message_type != 'call') {
         ioClient.socket.get('/update-message', { id: res.id, status: 'delivered', user_sent_id: res.user_sent_id }, function (d) {
+          console.log('get /update-message');
           isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
         })
       }
@@ -136,6 +137,8 @@ export default function Messenger() {
     // send private chat message (not a group)
     if (!currentChat.is_group) {
       // console.log('does this trigger ?')
+      console.log(newMessage);
+
       if (newMessage.match(/^\s+$/) || !newMessage) return;
 
       const sendMessage = {

@@ -6,11 +6,15 @@ import VideoCallModal from '../../modals/VideoCallModal';
 import axios from "axios";
 import { axiosHeadersObject } from "../../utils-contants";
 import Share from '../share/Share';
+import EmojiPicker from '../emojiPicker/EmojiPicker';
+import { SentimentSatisfiedAltOutlined } from '@material-ui/icons';
+
 
 export default function  CurrentChatBox({ messages, user, setNewMessage, newMessage, handleSubmit, scrollRef, currentChat, deliveredMessage }) {
     const [membersInBox, setMembersInBox] = useState([]);
     const [chatBoxImg, setChatBoxImg] = useState('');
     const [disableTextInput, setDisableTextInput] = useState(false);
+    const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
@@ -164,7 +168,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                 }
 
             </div>
-            <div className ="chat-footer">
+            <div className ="chat-footer" style ={{ position: 'relative' }}>
                 <form>
                     {/* <div>
                         <button className ="btn btn-light mr-3" data-toggle="tooltip" title="" type="button" data-original-title="Emoji">
@@ -173,14 +177,23 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                     </div> */}
                     {
                         !disableTextInput ? 
+                        <>
+                        <SentimentSatisfiedAltOutlined 
+                            fontSize='medium' 
+                            onClick = {() => {setOpenEmojiPicker(!openEmojiPicker)}}
+                        />
+                        {
+                            openEmojiPicker ? <EmojiPicker newMessage = {newMessage} setNewMessage = {setNewMessage}/>:<></>
+                        }
                         <input 
                             type="text" 
                             className ="form-control" 
                             placeholder="Write a message." 
                             onChange={(e) => setNewMessage(e.target.value)} 
                             value={newMessage}
-                            style = {{ marginRight: '10px' }}
-                        />   
+                            style = {{ marginRight: '10px', marginLeft: '10px' }}
+                        /> 
+                        </>
                         : <></>
                     }
                     <div className ="form-buttons">

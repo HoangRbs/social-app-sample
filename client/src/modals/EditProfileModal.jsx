@@ -25,7 +25,21 @@ export default function EditProfileModal({ open, handleOpen, handleClose }) {
         aria-describedby="modal-modal-description"
       >
        
-        <Box sx={style}></Box>
+        {/* <Box sx={style}>
+          
+        </Box> */}
+        <div style ={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <img src = 'https://img.freepik.com/free-vector/website-construction-with-laptop_24911-54680.jpg'/>
+        </div>
      
       </Modal>
     </div>

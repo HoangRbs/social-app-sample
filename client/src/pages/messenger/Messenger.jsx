@@ -175,12 +175,13 @@ export default function Messenger() {
           setMessages([...messages, res.data]);
         })
 
+        setNewMessage('');
+
       } else {
 
       }
     }
 
-    setNewMessage('');
   }, [newMessage]);
 
   useEffect(() => {

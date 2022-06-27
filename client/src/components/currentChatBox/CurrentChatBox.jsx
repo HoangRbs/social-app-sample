@@ -2,7 +2,6 @@ import * as React from 'react';
 import Message from "../../components/message/Message";
 import { useEffect, useState } from "react";
 import { apiRoutes } from "../../utils-contants";
-import VideoCallModal from '../../modals/VideoCallModal';
 import axios from "axios";
 import { axiosHeadersObject } from "../../utils-contants";
 import Share from '../share/Share';
@@ -17,14 +16,6 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
     const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-
-    // ---------- modal ---------
-    const [openVideoCallModal, setOpenVideoCallModal] = React.useState(false);
-    const handleOpenModal = () => setOpenVideoCallModal(true);
-    const handleCloseModal = () => setOpenVideoCallModal(false);
-    // ------- ./modal ----------
-
-    // console.log('messages:', messages);
 
     useEffect(() => {
 
@@ -45,16 +36,6 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
 
     }, [currentChat]);
 
-    // useEffect(() => {
-    //     // if only 2 members
-    //     // if (membersId.length === 2) {
-    //     //     const sender = membersInBox.find(member => member.id !== user.id);
-    //     //     setChatBoxImg(sender?.profilePicture);
-    //     //     setChatBoxName(sender?.username);
-    //     // } else {
-    //     //     // if is a group, only show svg vector img with first letter of group name: 'group name'.
-    //     // }
-    // }, [membersInBox]);
 
     useEffect(() => {
         if (!currentChat.is_group) {
@@ -68,14 +49,41 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
         elem.scrollTop = elem.scrollHeight;
     }, [messages, currentChat, membersInBox]);
 
-    // test useEffect
-    // useEffect(() => {
-    //   console.log('members in box: ', membersInBox);
-    // }, [membersInBox]);
+
+    const handleVideoCall =() => {
+        function createPopupWin(pageURL, pageTitle, width, height) {
+            var leftPosition, topPosition;
+            //Allow for borders.
+            leftPosition = window.screen.width / 2 - (width / 2 );
+            //Allow for title and status bars.
+            topPosition = window.screen.height / 2 - (height / 2 + 50);
+            window.open(
+                pageURL,
+                pageTitle,
+                "resizable=yes, width=" +
+                    width +
+                    ", height=" +
+                    height +
+                    ", top=" +
+                    topPosition +
+                    ", left=" +
+                    leftPosition
+            );
+        }
+
+        let tmpObj = {
+            user_token: localStorage.getItem('token'),
+            user_id: membersInBox[1].id,
+            status: 'calling',
+            call_id: null
+        }
+
+        let url = `http://localhost:9090/${tmpObj.user_token}/${tmpObj.user_id}/${tmpObj.status}/${tmpObj.call_id}`;
+        createPopupWin(url, "Video Call", "990", "650");
+    }
 
     return (
     <>
-        <VideoCallModal open = {openVideoCallModal} handleOpen = {handleOpenModal} handleClose = {handleCloseModal} />
         <div className ="chat">
             <div className ="chat-header">
                 <div className ="chat-header-user">
@@ -84,9 +92,6 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                     </figure>
                     <div>
                         <h5>{ currentChat.conversationName }</h5>
-                        {/* <small className ="text-success">
-                            <i>writing...</i>
-                        </small> */}
                     </div>
                 </div>
                 <div className ="chat-header-action">
@@ -101,7 +106,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             </a>
                         </li> */}
-                        <li className ="list-inline-item" data-toggle="tooltip" title="" data-original-title="Video call" onClick = {handleOpenModal}>
+                        <li className ="list-inline-item" data-toggle="tooltip" title="" data-original-title="Video call" onClick = {handleVideoCall}>
                             <a href="#" className ="btn btn-outline-light text-warning" data-toggle="modal" data-target="#videoCall">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-video"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                             </a>
@@ -138,7 +143,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                     <div className ="no-message-container">
                         <div className ="row mb-5">
                         </div>
-                        <p className ="lead">write a message</p>
+                        {/* <p className ="lead">write a message</p> */}
                     </div>
                     :
                     <div className ="messages">
@@ -159,6 +164,7 @@ export default function  CurrentChatBox({ messages, user, setNewMessage, newMess
                                     senderUsername = {sender?.user_name}
                                     senderProfilePicture = {sender?.profile_pic_url}
                                     messageTime = {m?.message_time}
+                                    messageTimeTotal = {m?.msg_time_total}
                                     isLastMessSent = {isLastMessSentByCurrentUser}
                                     isLastMessDelivered = {isLastMessDelivered}
                                 />    

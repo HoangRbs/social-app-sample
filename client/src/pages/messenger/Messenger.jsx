@@ -4,10 +4,11 @@ import FriendsSidebar from "../../components/friendsSidebar/FriendsSidebar";
 import ProfileBar from "../../components/profileBar/ProfileBar";
 import ConversationSidebar from "../../components/conversationsSidebar/ConversationSidebar";
 
-import { useContext, useEffect, useRef, useState , useCallback} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { apiRoutes, axiosHeadersObject, navigations, socketEvents } from '../../utils-contants';
+import VideoCallModal from '../../modals/VideoCallModal';
 
 // ------------------ socket ----------------------
 import socketIOClient  from "socket.io-client";
@@ -36,6 +37,15 @@ export default function Messenger() {
 
   const [messagesQueue, setMessagesQueue] = useState([]);   // for potato machine like macos :V
 
+  // ---------- video call modal ---------
+  const [openVideoCallModal, setOpenVideoCallModal] = useState(false);
+
+  const [currentCallingUser, setCurrentCallingUser] = useState(null);
+  const [currentCallId, setCurrentCallId] = useState(null);
+  const handleOpenModal = () => setOpenVideoCallModal(true);
+  const handleCloseModal = () => setOpenVideoCallModal(false);
+  // ------- ./modal ----------
+
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
@@ -58,12 +68,31 @@ export default function Messenger() {
       })
 
       ioClient.socket.on('updateMessage', function(res) {
-        // console.log('update message', res);
+        console.log('update delivered message', res);
         setDeliveredMessage(res);
+      })
+
+      // someone call you
+      ioClient.socket.on('calling', function(res) {
+
+        const getUser = async(user_id, call_id) => {
+          try {
+            const tmp = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
+            setCurrentCallingUser(tmp.data);
+            setCurrentCallId(call_id);
+
+            // open video modal
+            setOpenVideoCallModal(true);
+          } catch(err) {
+            console.log(err);
+          }           
+        }
+        
+        getUser(res.user_sent_id, res.id);
       })
   
       ioClient.socket.on('getMessage', function (res) {
-        // console.log('arrival message !: ', res);
+        console.log('arrival message !: ', res);
 
         setArrivalMessage(res);
         setMessagesQueue([...messagesQueue, res]); // push
@@ -88,8 +117,8 @@ export default function Messenger() {
       const res = messagesQueue.shift(); // pop
       
       if (res.message_type != 'call') {
+        console.log('update message: ', res);
         ioClient.socket.get('/update-message', { id: res.id, status: 'delivered', user_sent_id: res.user_sent_id }, function (d) {
-          console.log('get /update-message');
           isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
         })
       }
@@ -159,6 +188,16 @@ export default function Messenger() {
     setNewMessage("");
   };
 
+  const handleVideoCallDecline =(user_recv_id, msg_id) => {
+    ioClient.socket.get('/answer-call', {
+      response: 'decline',
+      user_recv_id: user_recv_id,
+      msg_id: msg_id
+    }, function (res) {
+      console.log(res);
+    })
+  }
+
   useEffect(() => {
     // upload image :')
     if (newMessage?.type === 'image') {
@@ -194,6 +233,20 @@ export default function Messenger() {
   return (
     
     <body>
+      {
+        currentCallingUser !== null && currentCallId !== null? 
+        <VideoCallModal 
+          open = {openVideoCallModal} 
+          handleOpen = {handleOpenModal} 
+          handleClose = {handleCloseModal} 
+          currentCallingUser = {currentCallingUser}
+          setCurrentCallingUser = {setCurrentCallingUser}
+          currentCallId = {currentCallId}
+          setCurrentCallId = {setCurrentCallId}
+          handleVideoCallDecline = {handleVideoCallDecline}
+        /> : <></>
+      }
+       
       {/* <!-- layout --> */}
       <div className ="layout">
 

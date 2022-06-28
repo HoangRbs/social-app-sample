@@ -13,7 +13,15 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 // ------------- ./dropdown menu import components ------------------
 
-export default function Navigation({user, setCurrentNavigation, setProfileBarActive, setProfileBarUserInfo, currentNavigation}) {
+export default function Navigation({
+    user, 
+    setCurrentNavigation, 
+    setProfileBarActive, 
+    setProfileBarUserInfo, 
+    currentNavigation,
+    userUpdated,
+    setUserUpdated
+}) {
 
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
     
@@ -54,7 +62,14 @@ export default function Navigation({user, setCurrentNavigation, setProfileBarAct
 
   return (
     <>
-        <EditProfileModal open = {openEditProfileModal} handleOpen = {handleOpenModal} handleClose = {handleCloseModal} />
+        <EditProfileModal 
+            open = {openEditProfileModal} 
+            handleOpen = {handleOpenModal} 
+            handleClose = {handleCloseModal} 
+            user = {user}
+            userUpdated = {userUpdated}
+            setUserUpdated = {setUserUpdated}
+        />
         <nav className ="navigation">
             <div className ="nav-group">
                 <ul>

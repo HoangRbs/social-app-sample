@@ -34,6 +34,13 @@ export const axiosHeadersObject = (AuthorizeToken) => {
     }
 }
 
+// fake api call axios
+// how to use:
+// await fakeAxios(2000);
+
+export const fakeAxios = ms => new Promise(
+    resolve => setTimeout(resolve, ms));
+
 // const conversation = {
 //     isPrivateChat: true,
 //     userReceiveId: user.id,

@@ -69,7 +69,7 @@ export default function Message({ message, messageType, own, senderUsername, sen
                 </figure> */}
                 <div>
                     {/* <h5>{senderUsername}</h5> */}
-                    <span className ="time" style = {{ marginRight: '6px' }}> 
+                    <span className ="time" style = {{ marginRight: '6px', marginLeft: '6px' }}> 
                       {new Date(messageTime).toLocaleString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
@@ -80,8 +80,8 @@ export default function Message({ message, messageType, own, senderUsername, sen
                       })} 
                     </span>
                     {
-                      isLastMessSent && isLastMessDelivered ? <span style = {{ color: 'rgb(74, 74, 74)', fontSize: '14px', marginRight: '10px', fontWeight: '500' }}>Delivered</span> : 
-                      isLastMessSent ? <span style = {{ color: 'rgb(74, 74, 74)', fontSize: '14px', marginRight: '10px', fontWeight: '500' }}> Sent </span> : <></> 
+                      isLastMessSent && isLastMessDelivered ? <span style = {{ color: 'rgb(74, 74, 74)', fontSize: '12px', marginRight: '10px', fontWeight: '500' }}>Delivered</span> : 
+                      isLastMessSent ? <span style = {{ color: 'rgb(74, 74, 74)', fontSize: '12px', marginRight: '10px', fontWeight: '500' }}> Sent </span> : <></> 
                     }
                 </div>
             </div>

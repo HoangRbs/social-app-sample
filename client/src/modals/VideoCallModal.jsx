@@ -1,8 +1,8 @@
 
 import * as React from 'react';
 import Modal from '@mui/material/Modal';
+import { useEffect } from 'react';
 import './VideoCallModal.css';
-
 
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
@@ -14,8 +14,18 @@ export default function VideoCallModal({
   setCurrentCallingUser, 
   currentCallId, 
   setCurrentCallId, 
-  handleVideoCallDecline 
+  handleVideoCallDecline,
+  arrivalMessage
 }) {
+
+  useEffect(() => {
+    
+    if (arrivalMessage?.message_type === 'call' && arrivalMessage?.message === 'Missed Call') {
+      handleClose();
+      setCurrentCallingUser(null);
+      setCurrentCallId(null);
+    }
+  }, [arrivalMessage]);
   
   const handleVideoCall =() => {
     function createPopupWin(pageURL, pageTitle, width, height) {
@@ -39,10 +49,10 @@ export default function VideoCallModal({
     }
 
     let tmpObj = {
-        user_token: localStorage.getItem('token'),
-        user_id: currentCallingUser.id,
-        status: 'answer',
-        call_id: currentCallId
+      user_token: localStorage.getItem('token'),
+      user_id: currentCallingUser.id,
+      status: 'answer',
+      call_id: currentCallId
     }
 
     let url = `http://localhost:9090/${tmpObj.user_token}/${tmpObj.user_id}/${tmpObj.status}/${tmpObj.call_id}`;
@@ -67,15 +77,25 @@ export default function VideoCallModal({
                     <div class="modal-body">
                         <div class="call">
                             <div>
-                                <figure class="mb-4 avatar avatar-xl">
-                                    <img 
-                                          src={currentCallingUser.profile_pic_url ? 
-                                          currentCallingUser.profile_pic_url
-                                          : 
-                                          PF + "person/noAvatar.png"}
-                                          class="rounded-circle" alt="image" 
-                                    />
-                                </figure>
+                                <div className = 'call-animation'>
+                                  {/* <figure class="mb-4 avatar avatar-xl"> */}
+                                      <img 
+                                            src={currentCallingUser.profile_pic_url ? 
+                                            currentCallingUser.profile_pic_url
+                                            : 
+                                            PF + "person/noAvatar.png"}
+                                            class="" alt="image" 
+                                            style = {{
+                                              width: '120px',
+                                              height: '120px',
+                                              borderRadius: '100%',
+                                              position: 'absolute',
+                                              left: '-5px',
+                                              top: '-5px'
+                                            }}
+                                      />
+                                  {/* </figure> */}
+                                </div>
                                 <h4> {currentCallingUser.user_name} <span class="text-success">video calling...</span></h4>
                                 <div class="action-button">
                                     <button type="button" class="btn btn-danger btn-floating btn-lg" data-dismiss="modal" 

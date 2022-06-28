@@ -140,7 +140,7 @@ export default function Messenger() {
   useEffect(() => {
     // check for arrival message (real time)
     // should check if the sender of the arrival message is in the current chat box (since current chat box display messages)
-    if (!currentChat?.is_group && currentChat?.userReceiveId === arrivalMessage?.user_sent_id) {
+    if (!currentChat?.is_group && currentChat?.userReceiveId === arrivalMessage?.user_sent_id || currentChat?.userReceiveId === arrivalMessage?.user_recv_id) {
       setMessages([...messages, arrivalMessage]);   // add arrival message to the current chat
     }
 
@@ -244,6 +244,7 @@ export default function Messenger() {
           currentCallId = {currentCallId}
           setCurrentCallId = {setCurrentCallId}
           handleVideoCallDecline = {handleVideoCallDecline}
+          arrivalMessage = {arrivalMessage}
         /> : <></>
       }
        

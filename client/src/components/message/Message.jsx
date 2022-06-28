@@ -1,6 +1,6 @@
 
 import { format } from "timeago.js";
-import { CheckCircle, CheckCircleOutline, VideocamOffRounded, VideocamRounded } from '@material-ui/icons';
+import { VideocamOffRounded, VideocamRounded } from '@material-ui/icons';
 
 export default function Message({ message, messageType, own, senderUsername, senderProfilePicture, messageTime, messageTimeTotal, isLastMessSent, isLastMessDelivered }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -21,7 +21,7 @@ export default function Message({ message, messageType, own, senderUsername, sen
                   <div className ="time"> {format(messageTime)} </div>
               </div>
           </div>
-          <div className ="message-content">
+          <div className ="message-content" style = {messageType === 'call' ? {backgroundColor: '#ebebeb', color: 'black'}:{} }>
             {
               messageType === 'string' ? message : 
               messageType === 'image_url' ? 
@@ -53,8 +53,8 @@ export default function Message({ message, messageType, own, senderUsername, sen
             }
           </div>
           {
-              isLastMessSent && isLastMessDelivered ? <CheckCircle fontSize="small" color='primary' /> : 
-              isLastMessSent ? <CheckCircleOutline fontSize="small" /> : <></>
+            isLastMessSent && isLastMessDelivered ? <p style = {{ color: '#ababab', fontSize: '14px', fontStyle: 'italic' }}>Delivered</p> : 
+            isLastMessSent ? <p style = {{ color: '#ababab', fontSize: '14px',  fontStyle: 'italic'}}>Sent</p> : <></>
           }
         </div>
       }

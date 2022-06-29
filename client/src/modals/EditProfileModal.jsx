@@ -2,8 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import './EditProfileModal.css';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { fakeAxios } from '../utils-contants';
+import { AuthContext } from "../context/AuthContext";
+import { LoginSuccess} from '../context/AuthActions';
 
 const style = {
   position: 'absolute',
@@ -31,6 +33,8 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
   const [shouldSave, setShouldSave] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
 
+  const { dispatch } = useContext(AuthContext);
+
   useEffect(() => {
     setUserName(user.user_name);
     setEmail(user.email);
@@ -55,10 +59,25 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
     if (!shouldSave) return;
 
     console.log('save thui hehe !!');
-    
+
+    // ko cho update
+    if (userName.match(/^\s+$/) || !userName) {
+      return;
+    }
+
+    if (password.match(/^\s+$/) || !password) {
+      // ko update password
+    }
+
     setLoadingSave(true);
 
     await fakeAxios(2000);
+
+    // ------------ reset user info ---------
+    // res = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
+    // const user = res.data;
+    // dispatch(LoginSuccess(user));
+    // ----------- ./rest user info ---------
 
     setLoadingSave(false);
     setUserName(user.user_name);
@@ -67,6 +86,8 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
     setFile(null);
     setShouldSave(false);
     setLoadingSave(false);
+    setPassword('');
+
     setUserUpdated(!userUpdated);
 
     handleClose();
@@ -80,6 +101,8 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
           setUserName(user.user_name);
           setEmail(user.email);
           setAvatar(user.profile_pic_url);
+          setPassword('');
+
           setFile(null);
           setShouldSave(false);
           setLoadingSave(false);
@@ -90,19 +113,15 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
         aria-describedby="modal-modal-description"
       >
        
-        {/* <Box sx={style}>
-          
-        </Box> */}
-        <div style = {{ position: 'absolute', left: '42%', top: '15%',  width: '550px' }}>
-          {/* <div class="check">
-            <input type="checkbox" id="checkbox" onchange="document.body.classList.toggle('capture')" /><label for="checkbox">test</label>
-          </div> */}
-          <div class="phone">
-            <div class="chevron" 
+        <div style = {{ position: 'absolute', left: '39%', top: '15%',  width: '700px' }}>
+          <div class="editprofile-phone">
+            <div class="editprofile-chevron" 
                 onClick = {() => { 
                   setUserName(user.user_name);
                   setEmail(user.email);
                   setAvatar(user.profile_pic_url);
+                  setPassword('');
+                  
                   setFile(null);
                   setShouldSave(false);
                   setLoadingSave(false);
@@ -111,43 +130,42 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
                 }} 
                 style = {{ height: '40px', width: '40px' }}>
             </div>
-            <div class="title">Edit profile</div>
+            <div class="editprofile-title">Edit profile</div>
+              <img 
+                class="editprofile-avatar" 
+                src={ 
+                  isProfileHover ? 
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuLnfPLVTh4KeLNvuyj15nRqSQ71A5yccavrGpwlTX2RJlM-_BD3_yCFALnCyOLHEoz1w' 
+                  : 
+                  file ? URL.createObjectURL(file)
+                  : 
+                  avatar ? avatar
+                  : 
+                  PF + "person/noAvatar.png" 
+                }
+
+                style = {
+                  isProfileHover ? 
+                  {
+                    cursor: 'pointer',
+                    opacity: '80%'
+                  }
+                  :
+                  {
+                    cursor: 'pointer',
+                  }
+                }
+                onMouseEnter = {() => {
+                  setIsProfileHover(true);
+                }} 
+                onMouseLeave = {() => {
+                  setIsProfileHover(false);
+                }}
+                onClick = {() => {
+                  document.getElementById('file').click();
+                }}
+              />
             
-            <img 
-              class="avatar" 
-              src={ 
-                isProfileHover ? 
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuLnfPLVTh4KeLNvuyj15nRqSQ71A5yccavrGpwlTX2RJlM-_BD3_yCFALnCyOLHEoz1w' 
-                : 
-                file ? URL.createObjectURL(file)
-                : 
-                avatar ? avatar
-                : 
-                PF + "person/noAvatar.png" 
-              }
-
-              style = {
-                isProfileHover ? 
-                {
-                  cursor: 'pointer',
-                  opacity: '80%'
-                }
-                :
-                {
-                  cursor: 'pointer',
-                }
-              }
-              onMouseEnter = {() => {
-                setIsProfileHover(true);
-              }} 
-              onMouseLeave = {() => {
-                setIsProfileHover(false);
-              }}
-              onClick = {() => {
-                document.getElementById('file').click();
-              }}
-            />
-
             {
               isProfileHover ? 
               <input
@@ -163,65 +181,56 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               : <></>
             }
 
-            <div class="name">{ user?.user_name }</div>
-            {/* <div class="name capture">
-              I <span class="obfuscate"></span> T <span class="obfuscate"></span>
-            </div> */}
-            {/* <div class="position">Senior Developer</div> */}
-            <div class="prop">Email</div>
-            {/* <div class="value">ivanataylor@kick-ass.code.com</div> */}
-            <input class="value"
+            <div class="editprofile-name">{ user?.user_name }</div>
+           
+            {/* <div class="editprofile-position">Senior Developer</div> */}
+            <div class="editprofile-prop">Email</div>
+            {/* <div class="editprofile-value">ivanataylor@kick-ass.code.com</div> */}
+            <input class="editprofile-value"
               value = {email}
               onChange = {(e) => {
                 setEmail(e.target.value);
               }}
             />
-            {/* <div class="value capture">
-              i <span class="obfuscate"></span> @k
-              <span class="obfuscate"></span> .com
-            </div> */}
-            <div class="prop">Username</div>
-            <input class="value"
+           
+            <div class="editprofile-prop">Username</div>
+            <input class="editprofile-value"
               value = {userName}
               onChange = {(e) => {
                 setUserName(e.target.value);
               }}
             />
-            {/* <div class="value capture">
-              <span class="obfuscate"></span>
-            </div> */}
-            <div class="prop">New Password</div>
+           
+            <div class="editprofile-prop">New Password</div>
             <input 
-              class="value" 
+              class="editprofile-value" 
               type="password" 
               value = { password }
               onChange = {(e) => {
                 setPassword(e.target.value);
               }}
             />
-            {/* <div class="value capture">
-              <span class="obfuscate"></span>
-            </div> */}
-            {/* <div class="prop">Birthday</div>
-            <div class="values">
-              <div class="value value--small">11</div>
-              <div class="value value--small capture">
-                <span class="obfuscate"></span>
+           
+            {/* <div class="editprofile-prop">Birthday</div>
+            <div class="editprofile-values">
+              <div class="editprofile-value value--small">11</div>
+              <div class="editprofile-value value--small capture">
+                <span class="editprofile-obfuscate"></span>
               </div>
-              <div class="value value--small">Sep</div>
-              <div class="value value--small capture">
-                <span class="obfuscate"></span>
+              <div class="editprofile-value value--small">Sep</div>
+              <div class="editprofile-value value--small capture">
+                <span class="editprofile-obfuscate"></span>
               </div>
-              <div class="value value--small">1990</div>
-              <div class="value value--small capture">
-                <span class="obfuscate"></span>
+              <div class="editprofile-value value--small">1990</div>
+              <div class="editprofile-value value--small capture">
+                <span class="editprofile-obfuscate"></span>
               </div>
             </div>
-            <div class="joined">
-              Joined <span class="date">20 Oct 2020</span><span class="date capture"> <span class="obfuscate"></span></span>
+            <div class="editprofile-joined">
+              Joined <span class="editprofile-date">20 Oct 2020</span><span class="editprofile-date capture"> <span class="editprofile-obfuscate"></span></span>
             </div> */}
             {
-              loadingSave ? <div class="loader-save"></div>
+              loadingSave ? <div class="editprofile-loader-save"></div>
               :
               <button 
                 onClick = {handleSave}

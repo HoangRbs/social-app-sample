@@ -96,7 +96,7 @@ export default function VideoCallModal({
                                       />
                                   {/* </figure> */}
                                 </div>
-                                <h4> {currentCallingUser.user_name} <span class="text-success">video calling...</span></h4>
+                                <h4 style = {{ marginTop: '40px' }}> {currentCallingUser.user_name} <span class="text-success">video calling...</span></h4>
                                 <div class="action-button">
                                     <button type="button" class="btn btn-danger btn-floating btn-lg" data-dismiss="modal" 
                                       onClick = {(e) => {

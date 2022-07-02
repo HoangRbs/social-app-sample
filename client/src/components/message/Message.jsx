@@ -18,9 +18,13 @@ export default function Message({ message, messageType, own, senderUsername, sen
                     <img src={ senderProfilePicture ? senderProfilePicture : PF + "person/noAvatar.png"} className ="rounded-circle" alt="image" />
                 </figure>
                 <div>
-                    <h5>{senderUsername}</h5>
+                    <span style = {{ fontSize: '15px', color: 'rgba(165,165,165,0.6)', marginBottom: '-30px' }}>{senderUsername}</span>
                     <div className ="time"> {format(messageTime)} </div>
                 </div>
+            </div> */}
+
+            {/* <div className="message-avatar" style = {{ marginBottom: '3px' }}>
+                <span style = {{ fontSize: '15px', color: 'rgba(165,165,165,0.6)' }}>{senderUsername}</span>
             </div> */}
             <div className = { messageType === 'image_url' ? "" : "message-content"} 
                   style = {

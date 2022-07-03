@@ -116,13 +116,20 @@ export default function Messenger() {
   useEffect(() => {
     if (messagesQueue.length > 0 && isMessageQueueDone) {
       isMessageQueueDone = false;     // block other messages in queue
-      const res = messagesQueue.shift(); // pop
+      const res = messagesQueue.shift(); // pop (not mutating so the messagesQueue useEffect will not be triggered)
       
       if (res.message_type != 'call') {
         console.log('update message: ', res);
-        ioClient.socket.get('/update-message', { id: res.id, status: 'delivered', user_sent_id: res.user_sent_id }, function (d) {
-          isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
-        })
+
+        if (!currentChat?.is_group) {
+          ioClient.socket.get('/update-message', { id: res.id, status: 'delivered', user_sent_id: res.user_sent_id }, function (d) {
+            isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
+          })
+        } else {
+          ioClient.socket.get('/update-group-message', { id: res.id, status: 'delivered' }, function (d) {
+            isMessageQueueDone = true;  // allow other messages in queue since the current message queue is done.
+          })
+        }
       }
       
     }
@@ -142,8 +149,15 @@ export default function Messenger() {
   useEffect(() => {
     // check for arrival message (real time)
     // should check if the sender of the arrival message is in the current chat box (since current chat box display messages)
-    if (!currentChat?.is_group && currentChat?.userReceiveId === arrivalMessage?.user_sent_id || currentChat?.userReceiveId === arrivalMessage?.user_recv_id) {
-      setMessages([...messages, arrivalMessage]);   // add arrival message to the current chat
+    if (!currentChat?.is_group) {
+      if (!currentChat?.is_group && currentChat?.userReceiveId === arrivalMessage?.user_sent_id 
+          || currentChat?.userReceiveId === arrivalMessage?.user_recv_id) {
+        setMessages([...messages, arrivalMessage]);   // add arrival message to the current chat
+      }
+    } else {
+      if (currentChat?.conversation_id === arrivalMessage?.group_id) {
+        setMessages([...messages, arrivalMessage]);   // add arrival message to the current chat
+      }
     }
 
   }, [arrivalMessage]);
@@ -165,12 +179,11 @@ export default function Messenger() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(newMessage);
+    if (newMessage.match(/^\s+$/) || !newMessage) return;
+
     // send private chat message (not a group)
     if (!currentChat.is_group) {
-      // console.log('does this trigger ?')
-      console.log(newMessage);
-
-      if (newMessage.match(/^\s+$/) || !newMessage) return;
 
       const sendMessage = {
         message: newMessage,
@@ -179,25 +192,42 @@ export default function Messenger() {
       };
   
       ioClient.socket.get('/send', {...sendMessage}, function (res) {
-        // console.log(res.data);
+        console.log(res.data);
         setMessages([...messages, res.data]);
       })
 
     } else {
 
+      const sendMessage = {
+        message: newMessage,
+        recvId: currentChat.conversation_id,
+        msg_type: "string" 
+      };
+
+      // console.log(sendMessage);
+  
+      ioClient.socket.get('/send-group', {...sendMessage}, function (res) {
+        // console.log(res);
+        setMessages([...messages, res.data]);
+      })
     }
 
     setNewMessage("");
   };
 
   const handleVideoCallDecline =(user_recv_id, msg_id) => {
-    ioClient.socket.get('/answer-call', {
-      response: 'decline',
-      user_recv_id: user_recv_id,
-      msg_id: msg_id
-    }, function (res) {
-      console.log(res);
-    })
+    if (!currentChat.is_group) {
+      ioClient.socket.get('/answer-call', {
+        response: 'decline',
+        user_recv_id: user_recv_id,
+        msg_id: msg_id
+      }, function (res) {
+        console.log(res);
+      })
+
+    } else {
+
+    }
   }
 
   useEffect(() => {
@@ -211,19 +241,24 @@ export default function Messenger() {
           recvId: currentChat.userReceiveId,
           msg_type: "image_url" 
         };
-
-        // console.log(sendMessage);
     
         ioClient.socket.get('/send', {...sendMessage}, function (res) {
-          // console.log('image', res);
           setMessages([...messages, res.data]);
         })
 
-        setNewMessage('');
-
       } else {
-
+        const sendMessage = {
+          message: newMessage.url,
+          recvId: currentChat.conversation_id,
+          msg_type: "image_url" 
+        };
+    
+        ioClient.socket.get('/send-group', {...sendMessage}, function (res) {
+          setMessages([...messages, res.data]);
+        })
       }
+
+      setNewMessage('');
     }
 
   }, [newMessage]);

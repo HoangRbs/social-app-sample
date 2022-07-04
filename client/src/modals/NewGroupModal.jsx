@@ -123,6 +123,9 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
             
             <div class="prop">Group Name</div>
             <input class="value"
+              style = {{
+                fontWeight: '400'
+              }}
               value = {groupName}
               onChange = {(e) => {
                 setGroupName(e.target.value);
@@ -155,7 +158,8 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                 width: '380px',
                 height: '50px',
                 overflow: 'hidden',
-                overflowY: 'scroll'
+                overflowY: 'scroll',
+                fontWeight: '500 '
               }}
             >
               {
@@ -165,7 +169,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                   backgroundColor: '#e0e0e0',
                   padding: '1px 6px 2px 6px',
                   borderRadius: '10px',
-                  fontWeight: '500'
+                  fontWeight: '400'
                 }}>
                   {m.user_name}
                   <HighlightOff 
@@ -224,7 +228,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                         />
                         <span 
                           style={{ 
-                            fontWeight: '500',
+                            fontWeight: '400',
                           }}>
                             {f.user_name}
                         </span>
@@ -262,6 +266,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                     backgroundColor: '#437ab7',
                     fontWeight: '400',
                     outline: 'none',
+                    color: 'white'
                   }
                   :
                   { 
@@ -272,6 +277,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                     backgroundColor: '#c7c5c5',
                     fontWeight: '400',
                     outline: 'none',
+                    color: 'white'
                   }
                 }>
                   Create Group                

@@ -192,7 +192,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               />
             
             {
-              isProfileHover ? 
+              true ? 
               <input
                 style = {{ display: 'none' }}
                 className="editprofile-avatar"
@@ -216,6 +216,10 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               onChange = {(e) => {
                 setEmail(e.target.value);
               }}
+
+              style = {{
+                fontWeight: '400'
+              }}
             />
            
             <div class="editprofile-prop">Username</div>
@@ -223,6 +227,10 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               value = {userName}
               onChange = {(e) => {
                 setUserName(e.target.value);
+              }}
+
+              style = {{
+                fontWeight: '400'
               }}
             />
            
@@ -233,6 +241,10 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               value = { password }
               onChange = {(e) => {
                 setPassword(e.target.value);
+              }}
+
+              style = {{
+                fontWeight: '400'
               }}
             />
            
@@ -270,6 +282,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
                     backgroundColor: '#437ab7',
                     fontWeight: '400',
                     outline: 'none',
+                    color: 'white'
                   }
                   :
                   { 
@@ -280,6 +293,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
                     backgroundColor: '#c7c5c5',
                     fontWeight: '400',
                     outline: 'none',
+                    color: 'white'
                   }
                 }>
                     Save                

@@ -18,9 +18,6 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
     const handleOpenModal = () => setOpenNewGroupModal(true);
     const handleCloseModal = () => setOpenNewGroupModal(false);
 
-    // ----------- in dam text: lam mau :v -------------
-    const [indamText, setIndamText] = useState(false);
-
     // click on a conversation to go to a conversation
     const handleClick = async (conv) => {
         try {
@@ -64,11 +61,6 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
             console.log(err);
         }
     };
-
-    useEffect(() => {
-        // set in dam last message cua conv dau tien duoc get
-        setIndamText(true);
-    }, [arrivalMessage]);
 
     const filterSearchConversations =(searchText) => {
         const filtered = conversations.filter(conv => {
@@ -131,17 +123,16 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                                 if (!c.is_group) {
                                     if (onlineUsersId.includes(c.user_id)) isOnline = true;
                                 } else {
-                                // ko lam online oke :))
+                                    // ko lam online oke :))
                                 }
 
-                                let shouldIndam = indamText && index == 0;
 
                                 return (
                                     <li key={index} onClick={() => { handleClick(c) }}>
                                         <Conversation 
                                             conversation={c} 
                                             isOnline = {isOnline}
-                                            shouldIndam = {shouldIndam}
+                                            shouldIndam = {c.is_black}
                                         />
                                     </li>
                                 )
@@ -152,17 +143,15 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                                 if (!c.is_group) {
                                     if (onlineUsersId.includes(c.user_id)) isOnline = true;
                                 } else {
-                                // ko lam online oke :))
+                                    // ko lam online oke :))
                                 }
-
-                                let shouldIndam = indamText && index == 0;
 
                                 return (
                                     <li key={index} onClick={() => { handleClick(c) }}>
                                         <Conversation 
                                             conversation={c} 
                                             isOnline = {isOnline}
-                                            shouldIndam = {shouldIndam}
+                                            shouldIndam = {c.is_black}
                                         />
                                     </li>
                                 )

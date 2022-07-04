@@ -8870,7 +8870,7 @@ body.form-membership .form-wrapper hr {
     margin-right: 0
 }
 
-@media (max-width:1200px) {
+@media (max-width:900px) {
     body.navigation-open:after {
         content: '';
         display: block;

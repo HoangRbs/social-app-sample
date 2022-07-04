@@ -3,9 +3,10 @@ import { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import './EditProfileModal.css';
 import { useEffect, useContext } from 'react';
-import { fakeAxios } from '../utils-contants';
+import { fakeAxios, axiosHeadersObject } from '../utils-contants';
 import { AuthContext } from "../context/AuthContext";
 import { LoginSuccess} from '../context/AuthActions';
+import axios from 'axios';
 
 const style = {
   position: 'absolute',
@@ -73,6 +74,30 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
 
     await fakeAxios(2000);
 
+    let imageUrl = '';
+
+    if (file) {
+      const data = new FormData();
+      const fileName = Date.now() + file.name;
+      data.append("name", fileName);
+      data.append("image", file);
+      
+      // console.log('upload file: ', file);
+      // console.log('upload data: ', data);
+
+      try {
+        const res = await axios.post("/upload/image", data, axiosHeadersObject());
+        // console.log('res: ', res);
+        imageUrl = res.data.data.file_path.fd;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    await axios.post(`/`, {
+
+    }, axiosHeadersObject());
+
     // ------------ reset user info ---------
     // res = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
     // const user = res.data;
@@ -88,7 +113,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
     setLoadingSave(false);
     setPassword('');
 
-    setUserUpdated(!userUpdated);
+    // window.location.reload();
 
     handleClose();
   }

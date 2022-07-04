@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import './EditProfileModal.css';
 import { useEffect, useContext } from 'react';
-import { fakeAxios, axiosHeadersObject } from '../utils-contants';
+import { fakeAxios, axiosHeadersObject, apiRoutes } from '../utils-contants';
 import { AuthContext } from "../context/AuthContext";
 import { LoginSuccess} from '../context/AuthActions';
 import axios from 'axios';
@@ -59,8 +59,6 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
   const handleSave = async () => {
     if (!shouldSave) return;
 
-    console.log('save thui hehe !!');
-
     // ko cho update
     if (userName.match(/^\s+$/) || !userName) {
       return;
@@ -71,8 +69,6 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
     }
 
     setLoadingSave(true);
-
-    await fakeAxios(2000);
 
     let imageUrl = '';
 
@@ -86,7 +82,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
       // console.log('upload data: ', data);
 
       try {
-        const res = await axios.post("/upload/image", data, axiosHeadersObject());
+        const res = await axios.post("/upload-user-image", data, axiosHeadersObject());
         // console.log('res: ', res);
         imageUrl = res.data.data.file_path.fd;
       } catch (err) {
@@ -94,14 +90,24 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
       }
     }
 
-    await axios.post(`/`, {
+    try {
+      const res = await axios.post(`/update-user-information`, {
+        user_name: userName,
+        password: password,
+        email: email,
+        avatar_url: imageUrl
+      }, axiosHeadersObject());
 
-    }, axiosHeadersObject());
+      console.log(res);
+
+    } catch (err) {
+      console.log(err);
+    }
 
     // ------------ reset user info ---------
-    // res = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
-    // const user = res.data;
-    // dispatch(LoginSuccess(user));
+    const res = await axios.get(apiRoutes.getUser(user.id), axiosHeadersObject());
+    const new_user = res.data;
+    dispatch(LoginSuccess(new_user));
     // ----------- ./rest user info ---------
 
     setLoadingSave(false);
@@ -113,7 +119,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
     setLoadingSave(false);
     setPassword('');
 
-    // window.location.reload();
+    window.location.reload();
 
     handleClose();
   }

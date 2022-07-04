@@ -8741,7 +8741,7 @@ body.form-membership .form-wrapper hr {
 .layout .content .chat .chat-body .messages .message-item .message-avatar .time {
     color: #828282;
     margin-top: 2px;
-    font-style: italic;
+    font-style: normal;
     font-size: 12px
 }
 

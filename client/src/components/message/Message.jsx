@@ -30,17 +30,17 @@ export default function Message({ message, messageType, own, senderUsername, sen
                   {
                     own ? 
                       <>
-                        <span style = {{ fontSize: '15px', color: 'rgba(165,165,165,0.6)' }}>{senderUsername}</span>
-                        <figure className ="avatar" style = {{ width: '29px', height: '29px', marginLeft: '15px' }}>
+                        <span style = {{ fontSize: '15px', color: 'rgba(125,118,118,1)', marginLeft: '3px' }}>{senderUsername}</span>
+                        <figure className ="avatar" style = {{ width: '29px', height: '29px', marginLeft: '15px', marginBottom: '5px' }}>
                           <img src={ senderProfilePicture ? senderProfilePicture : PF + "person/noAvatar.png"} className ="rounded-circle" alt="image" />
                         </figure>
                       </>
                       :
                       <>
-                        <figure className ="avatar" style = {{ width: '29px', height: '29px' }}>
+                        <figure className ="avatar" style = {{ width: '29px', height: '29px', marginBottom: '5px' }}>
                           <img src={ senderProfilePicture ? senderProfilePicture : PF + "person/noAvatar.png"} className ="rounded-circle" alt="image" />
                         </figure>
-                        <span style = {{ fontSize: '15px', color: 'rgba(165,165,165,0.6)' }}>{senderUsername}</span>
+                        <span style = {{ fontSize: '15px', color: 'rgba(125,118,118,1)' }}>{senderUsername}</span>
                       </>
                   }
                 </div>

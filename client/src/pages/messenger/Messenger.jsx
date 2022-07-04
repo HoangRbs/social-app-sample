@@ -88,7 +88,7 @@ export default function Messenger() {
             setIsCurrentGroupCall(res.is_group);
 
             // open video modal
-            setOpenVideoCallModal(true);
+            handleOpenModal();
           } catch(err) {
             console.log(err);
           }           
@@ -295,7 +295,7 @@ export default function Messenger() {
     
     <body>
       {
-        currentCallingUser !== null && currentCallId !== null? 
+        // currentCallingUser !== null && currentCallId !== null? 
         <VideoCallModal 
           open = {openVideoCallModal} 
           handleOpen = {handleOpenModal} 
@@ -308,7 +308,8 @@ export default function Messenger() {
           arrivalMessage = {arrivalMessage}
           isCurrentGroupCall = {isCurrentGroupCall}
           setIsCurrentGroupCall = {setIsCurrentGroupCall}
-        /> : <></>
+        /> 
+        // : <></>
       }
        
       {/* <!-- layout --> */}

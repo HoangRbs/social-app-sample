@@ -71,7 +71,7 @@ export default function VideoCallModal({
 
 
   return (
-    <div>
+    
       <Modal
         open={open}
         onClose={handleClose}
@@ -90,7 +90,7 @@ export default function VideoCallModal({
                                 <div className = 'call-animation'>
                                   {/* <figure class="mb-4 avatar avatar-xl"> */}
                                       <img 
-                                            src={currentCallingUser.profile_pic_url ? 
+                                            src={currentCallingUser?.profile_pic_url ? 
                                             currentCallingUser.profile_pic_url
                                             : 
                                             PF + "person/noAvatar.png"}
@@ -106,7 +106,7 @@ export default function VideoCallModal({
                                       />
                                   {/* </figure> */}
                                 </div>
-                                <h4 style = {{ marginTop: '40px' }}> {currentCallingUser.user_name} <span class="text-success">video calling...</span></h4>
+                                <h4 style = {{ marginTop: '40px' }}> {currentCallingUser?.user_name} <span class="text-success">video calling...</span></h4>
                                 <div class="action-button">
                                     <button type="button" class="btn btn-danger btn-floating btn-lg" data-dismiss="modal" 
                                       style = {{
@@ -117,7 +117,7 @@ export default function VideoCallModal({
                                         // decline video call
                                         e.preventDefault();
                                         handleClose();
-                                        handleVideoCallDecline(currentCallingUser.id, currentCallId, isCurrentGroupCall);
+                                        handleVideoCallDecline(currentCallingUser?.id, currentCallId, isCurrentGroupCall);
 
                                         resetVideoCallState();
                                       }}
@@ -147,6 +147,6 @@ export default function VideoCallModal({
 
         
       </Modal>
-    </div>
+    
   );
 }

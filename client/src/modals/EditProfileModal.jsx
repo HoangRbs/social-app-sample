@@ -187,7 +187,7 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
                   setIsProfileHover(false);
                 }}
                 onClick = {() => {
-                  document.getElementById('file').click();
+                  document.getElementById('file_editprofile').click();
                 }}
               />
             
@@ -195,9 +195,9 @@ export default function EditProfileModal({ open, handleOpen, handleClose, user, 
               isProfileHover ? 
               <input
                 style = {{ display: 'none' }}
-                className="avatar"
+                className="editprofile-avatar"
                 type="file"
-                id="file"
+                id="file_editprofile"
                 accept=".png,.jpeg,.jpg"
                 onChange={(e) => {
                   setFile(e.target.files[0]);

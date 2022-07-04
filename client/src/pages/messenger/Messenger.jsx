@@ -44,6 +44,8 @@ export default function Messenger() {
 
   const [currentCallingUser, setCurrentCallingUser] = useState(null);
   const [currentCallId, setCurrentCallId] = useState(null);
+  const [isCurrentGroupCall, setIsCurrentGroupCall] = useState(false);
+
   const handleOpenModal = () => setOpenVideoCallModal(true);
   const handleCloseModal = () => setOpenVideoCallModal(false);
   // ------- ./modal ----------
@@ -76,12 +78,14 @@ export default function Messenger() {
 
       // someone call you
       ioClient.socket.on('calling', function(res) {
+        console.log('video calling: ', res);
 
         const getUser = async(user_id, call_id) => {
           try {
             const tmp = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
             setCurrentCallingUser(tmp.data);
             setCurrentCallId(call_id);
+            setIsCurrentGroupCall(res.is_group);
 
             // open video modal
             setOpenVideoCallModal(true);
@@ -163,10 +167,30 @@ export default function Messenger() {
   }, [arrivalMessage]);
 
   useEffect(() => {
+    
     const getConversations = async () => { // arrival message to check for new conversations
       try {
+        let convImg = '';
+
         const res = await axios.get(apiRoutes.getConversations, axiosHeadersObject());
-        setConversations(res.data.data);
+
+        let tmpConversations = res.data.data;
+        tmpConversations = await Promise.all(tmpConversations.map(async (conv) => {
+          if (!conv.is_group) {
+            // set image for conversation
+            const res = await axios.get(apiRoutes.getUser(conv.user_id), axiosHeadersObject());
+            const receiver = res.data;
+
+            convImg = receiver.profile_pic_url;
+          }
+
+          return {
+            convImg: convImg,
+            ...conv,
+          }
+        }));
+
+        setConversations(tmpConversations);
       } catch (err) {
         console.log(err);
       }
@@ -179,7 +203,7 @@ export default function Messenger() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(newMessage);
+    // console.log(newMessage);
     if (newMessage.match(/^\s+$/) || !newMessage) return;
 
     // send private chat message (not a group)
@@ -192,7 +216,7 @@ export default function Messenger() {
       };
   
       ioClient.socket.get('/send', {...sendMessage}, function (res) {
-        console.log(res.data);
+        // console.log(res.data);
         setMessages([...messages, res.data]);
       })
 
@@ -215,8 +239,8 @@ export default function Messenger() {
     setNewMessage("");
   };
 
-  const handleVideoCallDecline =(user_recv_id, msg_id) => {
-    if (!currentChat.is_group) {
+  const handleVideoCallDecline =(user_recv_id, msg_id, isGroupCall) => {
+    if (!isGroupCall) {
       ioClient.socket.get('/answer-call', {
         response: 'decline',
         user_recv_id: user_recv_id,
@@ -282,6 +306,8 @@ export default function Messenger() {
           setCurrentCallId = {setCurrentCallId}
           handleVideoCallDecline = {handleVideoCallDecline}
           arrivalMessage = {arrivalMessage}
+          isCurrentGroupCall = {isCurrentGroupCall}
+          setIsCurrentGroupCall = {setIsCurrentGroupCall}
         /> : <></>
       }
        
@@ -313,6 +339,7 @@ export default function Messenger() {
                 setCurrentChat = {setCurrentChat} 
                 onlineUsersId = {onlineUsersId} 
                 setCurrentNavigation = {setCurrentNavigation}  
+                arrivalMessage = {arrivalMessage}
               />
               /* <!-- ./ Conversations sidebar --> */
               : <></>
@@ -344,6 +371,7 @@ export default function Messenger() {
               scrollRef = {scrollRef}
               currentChat = {currentChat}
               deliveredMessage = {deliveredMessage}
+              onlineUsersId = {onlineUsersId}
             />
           ) : (
             <span style = {{ margin: 'auto', textAlign: 'center', fontSize: '25px' }}>

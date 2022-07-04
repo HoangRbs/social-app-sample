@@ -6,8 +6,9 @@ import NewGroupModal from '../../modals/NewGroupModal';
 import axios from "axios";
 import { apiRoutes, axiosHeadersObject } from "../../utils-contants";
 import { useState } from 'react';
+import { useEffect } from 'react';
 
-export default function ConversationSidebar ({ conversations, currentUser, setCurrentChat, onlineUsersId, setCurrentNavigation }) {
+export default function ConversationSidebar ({ conversations, currentUser, setCurrentChat, onlineUsersId, setCurrentNavigation, arrivalMessage }) {
     
     const [filterConversations, setFilterConversations] = useState([]);
     const [filterText, setFilterText] = useState('');
@@ -16,6 +17,9 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
     const [openNewGroupModal, setOpenNewGroupModal] = React.useState(false);
     const handleOpenModal = () => setOpenNewGroupModal(true);
     const handleCloseModal = () => setOpenNewGroupModal(false);
+
+    // ----------- in dam text: lam mau :v -------------
+    const [indamText, setIndamText] = useState(false);
 
     // click on a conversation to go to a conversation
     const handleClick = async (conv) => {
@@ -61,6 +65,11 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
         }
     };
 
+    useEffect(() => {
+        // set in dam last message cua conv dau tien duoc get
+        setIndamText(true);
+    }, [arrivalMessage]);
+
     const filterSearchConversations =(searchText) => {
         const filtered = conversations.filter(conv => {
             if (conv.conversation_name.includes(searchText)) {
@@ -98,11 +107,6 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                                 </li>
                             </Tooltip>
                         </div>
-                        {/* <li className ="list-inline-item d-xl-none d-inline">
-                            <a href="#" className ="btn btn-outline-light text-danger sidebar-close">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className ="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                            </a>
-                        </li> */}
                     </ul>
                 </header>
                 <form>
@@ -121,26 +125,48 @@ export default function ConversationSidebar ({ conversations, currentUser, setCu
                     <ul className ="list-group list-group-flush">
 
                         {!filterText ? 
-                            conversations.map((c, index) => (
-                                <li onClick={() => { handleClick(c) }} key={index}>
-                                    <Conversation 
-                                        conversation={c} 
-                                        currentUser={currentUser} 
-                                        onlineUsersId = {onlineUsersId}
-                                        key={index}
-                                    />
-                                </li>
-                            )) : 
-                            filterConversations.map((c, index) => (
-                                <li onClick={() => { handleClick(c) }} key={index}>
-                                    <Conversation 
-                                        conversation={c} 
-                                        currentUser={currentUser} 
-                                        onlineUsersId = {onlineUsersId}
-                                        key={index}
-                                    />
-                                </li>
-                            ))
+                            conversations.map((c, index) => { 
+                                let isOnline = false;
+
+                                if (!c.is_group) {
+                                    if (onlineUsersId.includes(c.user_id)) isOnline = true;
+                                } else {
+                                // ko lam online oke :))
+                                }
+
+                                let shouldIndam = indamText && index == 0;
+
+                                return (
+                                    <li key={index} onClick={() => { handleClick(c) }}>
+                                        <Conversation 
+                                            conversation={c} 
+                                            isOnline = {isOnline}
+                                            shouldIndam = {shouldIndam}
+                                        />
+                                    </li>
+                                )
+                            }) : 
+                            filterConversations.map((c, index) => { 
+                                let isOnline = false;
+
+                                if (!c.is_group) {
+                                    if (onlineUsersId.includes(c.user_id)) isOnline = true;
+                                } else {
+                                // ko lam online oke :))
+                                }
+
+                                let shouldIndam = indamText && index == 0;
+
+                                return (
+                                    <li key={index} onClick={() => { handleClick(c) }}>
+                                        <Conversation 
+                                            conversation={c} 
+                                            isOnline = {isOnline}
+                                            shouldIndam = {shouldIndam}
+                                        />
+                                    </li>
+                                )
+                            })
                         }
                     </ul>
                 </div>

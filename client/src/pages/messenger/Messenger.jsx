@@ -76,16 +76,17 @@ export default function Messenger() {
         setDeliveredMessage(res);
       })
 
-      // someone call you
+      // someone call you private chat
       ioClient.socket.on('calling', function(res) {
         console.log('video calling: ', res);
 
         const getUser = async(user_id, call_id) => {
           try {
             const tmp = await axios.get(apiRoutes.getUser(user_id), axiosHeadersObject());
+
             setCurrentCallingUser(tmp.data);
             setCurrentCallId(call_id);
-            setIsCurrentGroupCall(res.is_group);
+            setIsCurrentGroupCall(false);
 
             // open video modal
             handleOpenModal();
@@ -95,6 +96,34 @@ export default function Messenger() {
         }
         
         getUser(res.user_sent_id, res.id);
+      })
+
+      // someone call you group chat
+      ioClient.socket.on('group_calling', function(res) {
+
+        console.log('video group calling: ', res);
+
+                    const getUser = async(group_id, call_id) => {
+                      try {
+                        const tmp = await axios.get(
+                          apiRoutes.findGroupConversation(group_id),
+                          axiosHeadersObject()
+                        );
+
+                        console.log(tmp);
+
+                        setCurrentCallingUser({...tmp.data.data, group_id: group_id});
+                        setCurrentCallId(call_id);
+                        setIsCurrentGroupCall(true);
+
+                        // open video modal
+                        handleOpenModal();
+                      } catch(err) {
+                        console.log(err);
+                      }           
+                    }
+        
+        getUser(res.group_id, res.id);
       })
   
       ioClient.socket.on('getMessage', function (res) {

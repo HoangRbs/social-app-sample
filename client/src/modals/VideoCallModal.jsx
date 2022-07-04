@@ -50,15 +50,30 @@ export default function VideoCallModal({
       );
     }
 
-    let tmpObj = {
-      user_token: localStorage.getItem('token'),
-      user_id: currentCallingUser.id,
-      status: 'answer',
-      call_id: currentCallId
-    }
+    if (!isCurrentGroupCall) {
+      let tmpObj = {
+        user_token: localStorage.getItem('token'),
+        user_id: currentCallingUser.id,
+        status: 'answer',
+        call_id: currentCallId
+      }
+  
+      let url = `http://localhost:9090/${tmpObj.user_token}/${tmpObj.user_id}/${tmpObj.status}/${tmpObj.call_id}`;
+      createPopupWin(url, "Video Call", "990", "650");
 
-    let url = `http://localhost:9090/${tmpObj.user_token}/${tmpObj.user_id}/${tmpObj.status}/${tmpObj.call_id}`;
-    createPopupWin(url, "Video Call", "990", "650");
+    } else {
+
+      let tmpObj = {
+        user_token: localStorage.getItem('token'),
+        group_id: currentCallingUser.group_id,
+        status: 'answer',
+        call_id: currentCallId
+      }
+  
+      let url = `http://localhost:9090/group/${tmpObj.user_token}/${tmpObj.group_id}/${tmpObj.status}/${tmpObj.call_id}`;
+      createPopupWin(url, "Video Call", "990", "650");
+
+    }
 
     resetVideoCallState();
   }
@@ -90,23 +105,29 @@ export default function VideoCallModal({
                                 <div className = 'call-animation'>
                                   {/* <figure class="mb-4 avatar avatar-xl"> */}
                                       <img 
-                                            src={currentCallingUser?.profile_pic_url ? 
-                                            currentCallingUser.profile_pic_url
-                                            : 
-                                            PF + "person/noAvatar.png"}
-                                            class="" alt="image" 
-                                            style = {{
-                                              width: '120px',
-                                              height: '120px',
-                                              borderRadius: '100%',
-                                              position: 'absolute',
-                                              left: '-5px',
-                                              top: '-5px'
-                                            }}
+                                            src={
+                                              isCurrentGroupCall ? 
+                                              PF + "person/groupChat.png"
+                                              :
+                                              currentCallingUser?.profile_pic_url ? 
+                                              currentCallingUser.profile_pic_url
+                                              : 
+                                              PF + "person/noAvatar.png"}
+                                              
+                                              alt="image" 
+                                              style = {{
+                                                width: '120px',
+                                                height: '120px',
+                                                borderRadius: '100%',
+                                                position: 'absolute',
+                                                left: '-5px',
+                                                top: '-5px'
+                                              }
+                                            }
                                       />
                                   {/* </figure> */}
                                 </div>
-                                <h4 style = {{ marginTop: '40px' }}> {currentCallingUser?.user_name} <span class="text-success">video calling...</span></h4>
+                                <h4 style = {{ marginTop: '40px' }}> {isCurrentGroupCall ? currentCallingUser.conversationName : currentCallingUser?.user_name} <span class="text-success">video calling...</span></h4>
                                 <div class="action-button">
                                     <button type="button" class="btn btn-danger btn-floating btn-lg" data-dismiss="modal" 
                                       style = {{

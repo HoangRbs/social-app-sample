@@ -129,6 +129,16 @@ export default function  CurrentChatBox({
 
         } else {
             // group video chat
+
+            let tmpObj = {
+                user_token: localStorage.getItem('token'),
+                group_id: currentChat.conversation_id,
+                status: 'calling',
+                call_id: null
+            }
+    
+            let url = `http://localhost:9090/group/${tmpObj.user_token}/${tmpObj.group_id}/${tmpObj.status}/${tmpObj.call_id}`;
+            createPopupWin(url, "Video Call", "990", "650");
         }
     }
 

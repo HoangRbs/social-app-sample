@@ -1,12 +1,12 @@
-import * as React from 'react';
 import Modal from '@mui/material/Modal';
 import './NewGroupModal.css';
 import { useState, useEffect, useContext } from 'react';
 import { apiRoutes, axiosHeadersObject, fakeAxios } from "../utils-contants";
-import MenuItem from '@mui/material/MenuItem';
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { HighlightOff, AddCircleOutline, AddCircle, LaptopWindows } from '@material-ui/icons';
+import {  AddCircle } from '@material-ui/icons';
+import { Autocomplete, Avatar, TextField } from '@mui/material';
+import { Chip } from '@material-ui/core';
 
 export default function NewGroupModal({ open, handleOpen, handleClose }) {
   const [groupName, setGroupName] = useState('');
@@ -27,7 +27,10 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
       const res = await axios.get(apiRoutes.getAllUsers, axiosHeadersObject());
       const tmp = res.data.data.filter(f => f.id !== user.id);
       
-      setAllFriends(tmp);
+      setAllFriends(tmp.map(user => ({
+        ...user,
+        label: user.user_name
+      })));
     };
 
     getAllFriends();
@@ -52,6 +55,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
       name: groupName,
       user_ids: chosenGroupMembers.map((el) => el.id)
     },axiosHeadersObject())
+    console.log(chosenGroupMembers);
 
     setLoadingSave(false);
     setGroupName('');
@@ -62,22 +66,6 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
     handleClose();
 
     window.location.reload();
-  }
-
-  const isContainChosenMember = (id) => {
-    const found = chosenGroupMembers.find(m => m.id === id);
-    if (found) return true;
-    return false;
-  }
-
-  const handleRemoveChosenMember = (id) => {
-    let foundIndex = -1;
-    chosenGroupMembers.find((e, index) => {
-      if (e.id === id) { foundIndex = index; return true; }
-    });
-
-    chosenGroupMembers.splice(foundIndex,1);  // spliced element
-    setChosenGroupMembers([...chosenGroupMembers]);  // remaining elements
   }
 
   return (
@@ -96,7 +84,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <div style = {{ position: 'absolute', left: '39%', top: '15%',  width: '700px' }}>
+        <div style = {{ position: 'absolute', left: '39%', top: '15%',  width: '740px' }}>
           <div class="phone">
             <div class="chevron" 
                 onClick = {() => { 
@@ -119,7 +107,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
               />
             </figure>
 
-            <div class="name">{ 'create new group' }</div>
+            <div class="name">Create new group</div>
             
             <div class="prop">Group Name</div>
             <input class="value"
@@ -138,118 +126,73 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
               }}
             >
               <span style = {{ marginRight: '3px' }} onClick = {() => { setShowFriends(!showFriends) }}>Group Members</span>
-              {
-                !showFriends ? 
-                <AddCircle fontSize='medium' onClick = {() => { setShowFriends(!showFriends) }}/>
-                : 
-                <AddCircleOutline fontSize='medium' onClick = {() => { setShowFriends(!showFriends) }}/>
-              }
             </div>
-            <div
-              class="value" 
-              onClick = {() => {
-                setShowFriends(false);
+            <Autocomplete 
+              onChange={(event, newValue) => {
+                setChosenGroupMembers(newValue);
               }}
-              
-              style = {{
-                height: '25px',
-                position: 'relative',
-                cursor: 'pointer',
-                width: '380px',
-                height: '50px',
-                overflow: 'hidden',
-                overflowY: 'scroll',
-                fontWeight: '500 '
+              sx={{ 
+                marginTop: '15px', 
+                width: '91%'
               }}
-            >
-              {
-                chosenGroupMembers.map((m) => 
-                <span style = {{
-                  marginRight: '3px',
-                  backgroundColor: '#e0e0e0',
-                  padding: '1px 6px 2px 6px',
-                  borderRadius: '10px',
-                  fontWeight: '400'
-                }}>
-                  {m.user_name}
-                  <HighlightOff 
-                    fontSize='small' 
-                    style = {{ marginLeft: '17px' }} 
-                    onClick = {() => {
-                      handleRemoveChosenMember(m.id);
-                    }}
-                  />
-                </span>)
-              }
-            </div>
-          
-            {
-              showFriends ? 
-              <div 
-                style = {{ 
-                  position: 'absolute', 
-                  top: '379px' , 
-                  height: '250px', 
-                  width: '215px',
-                  overflow: 'hidden',
-                  overflowY: 'scroll',
-                  marginTop: '-7px',
-                  marginLeft: 'auto'
-                }}>
-                {
-                  allFriends.map((f) => 
-                    <MenuItem 
-                      style = {{ 
-                        backgroundColor: '#e0e0e0', 
-                        width: '200px', 
-                        borderRadius: '4px 4px 4px 4px',
-                        height: '50px',
-                        opacity: '0.95'
-                      }}
-                    >
-                      <div 
-                        onClick = {() => {
-                          if(isContainChosenMember(f.id)) return;
-                          setChosenGroupMembers([...chosenGroupMembers, { id: f.id, user_name: f.user_name }]);
-                        }}
-
-                        style = {{
-                          overflowX: 'scroll'
-                        }}
-                      >
-                        <img className='avatar' 
-                          style = {{ 
-                            width: '30px',
-                            height: '30px',
-                            marginTop: '0px',
-                            marginRight: '30px'
-                          }} 
-                          src = {f.profile_pic_url ? f.profile_pic_url : PF + "person/noAvatar.png"}
-                        />
-                        <span 
-                          style={{ 
-                            fontWeight: '400',
-                          }}>
-                            {f.user_name}
-                        </span>
-                      </div>
-                      {
-                        isContainChosenMember(f.id) ? 
-                        <HighlightOff 
-                          fontSize='small' 
-                          style = {{ marginLeft: 'auto' }} 
-                          onClick = {() => {
-                            handleRemoveChosenMember(f.id);
-                          }}
-                        />: <></>
+              fullWidth
+              multiple
+              options={allFriends}
+              disableCloseOnSelect
+              popupIcon={<AddCircle />}
+              renderInput={(params) => 
+                <TextField 
+                  {...params} 
+                  fullWidth 
+                  variant="standard" 
+                  placeholder="Click to add user"
+                  // size='small'
+                  sx={{
+                      paddingBottom: '10px',
+                      "& label.Mui-focused": {
+                          display: "none"
+                      },
+                      "& legend": {
+                          display: "none"
                       }
-                    </MenuItem>
-                  )
-                }
-              </div> 
-              : 
-              <></>
-            }
+                  }}
+                />
+              }
+              renderOption={(props, option, state) => (
+                <div {...props}>
+                    <img className='avatar' 
+                      style = {{ 
+                        width: '26px',
+                        height: '26px',
+                        marginTop: '0px',
+                        marginRight: '30px',
+                      }} 
+                      src = {option.profile_pic_url ? option.profile_pic_url : PF + "person/noAvatar.png"}
+                      alt='user'
+                    />
+                  <span 
+                    style={{ 
+                      fontWeight: '500',
+                    }}>
+                      {option.user_name}
+                  </span>
+                </div>
+              )}
+              renderTags={(tagValue, getTagProps) => (
+                tagValue.map((option, index) => (
+                  <Chip 
+                    {...getTagProps({ index })}
+                    avatar={
+                      <Avatar 
+                        alt={option.user_name}  
+                        src={option.profile_pic_url ? option.profile_pic_url : PF + "person/noAvatar.png"} 
+                      />
+                    }
+                    label={option.user_name} 
+                  />
+                ))
+              )}
+            />
             {
               loadingSave ? <div class="loader-save"></div>
               :
@@ -260,6 +203,7 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                   shouldSave ? 
                   { 
                     marginTop: '50px', 
+                    marginBottom: '20px', 
                     border: 'none', 
                     padding: '6px 25px', 
                     borderRadius: '20px', 
@@ -271,11 +215,13 @@ export default function NewGroupModal({ open, handleOpen, handleClose }) {
                   :
                   { 
                     marginTop: '50px', 
+                    marginBottom: '20px', 
                     border: 'none', 
                     padding: '6px 25px', 
                     borderRadius: '20px', 
                     backgroundColor: '#c7c5c5',
                     fontWeight: '400',
+                    outline: 'none',
                     outline: 'none',
                     color: 'white'
                   }

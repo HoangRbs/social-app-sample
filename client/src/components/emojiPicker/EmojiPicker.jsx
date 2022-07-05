@@ -23,7 +23,19 @@ export default function EmojiPicker ({ newMessage, setNewMessage }) {
       ) : (
         <span>No emoji Chosen</span>
       )} */}
-      <Picker onEmojiClick={onEmojiClick} />
+      <Picker 
+        onEmojiClick={onEmojiClick} 
+        groupVisibility = {{
+          flags: false,
+          symbols: false,
+          objects: false,
+          activities: false,
+          travel_places: false,
+          recently_used: false,
+          food_drink: false,
+          animals_nature: false,
+        }}
+      />
     </div>
   );
 };

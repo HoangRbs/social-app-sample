@@ -78,7 +78,7 @@ export default function  CurrentChatBox({
         } else {
             setIsOnline(false);
         }
-    }, [onlineUsersId]);
+    }, [onlineUsersId, currentChat]);
 
 
     useEffect(() => {

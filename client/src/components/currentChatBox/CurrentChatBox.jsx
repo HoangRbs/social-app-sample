@@ -75,6 +75,8 @@ export default function  CurrentChatBox({
             } else {
                 setIsOnline(false);
             }
+        } else {
+            setIsOnline(false);
         }
     }, [onlineUsersId]);
 

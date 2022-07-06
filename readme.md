@@ -9,6 +9,7 @@
   + Register, Login
   + Watch your profile
   + Watch others' profiles
+  + update your profile
   + Show list of friends
   + Show list of conversations: private Chat or Group Chat
   + upload emoji, upload image in chat box

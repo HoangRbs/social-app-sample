@@ -39,21 +39,30 @@ export default function ProfileBar ({user, isProfileBarActive, setProfileBarActi
                         </div>
                         <div className ="tab-content" id="myTabContent">
                             <div className ="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                <p className ="text-muted"> {'some description of user if necessery ......'} </p>
+                                {/* <p className ="text-muted"> {'some description of user if necessery ......'} </p> */}
                                 <div className ="mt-4 mb-4">
-                                    <h6>Phone</h6>
-                                    <p className ="text-muted">(555) 555 55 55</p>
+                                    <h6>Email</h6>
+                                    <p className ="text-muted">{user.email}</p>
                                 </div>
                                 <div className ="mt-4 mb-4">
-                                    <h6>City</h6>
-                                    <p className ="text-muted">Ha noi - Cau giay - Washinton DC</p>
+                                    <h6>Joined Date</h6>
+                                    <p className ="text-muted">{
+                                        new Date(user.createdAt).toLocaleString('en-US', {
+                                            // hour: 'numeric',
+                                            // minute: 'numeric',
+                                            // hour12: true,
+                                            day: 'numeric',
+                                            month: 'numeric',
+                                            year: '2-digit'
+                                        })}
+                                    </p>
                                 </div>
-                                <div className ="mt-4 mb-4">
+                                {/* <div className ="mt-4 mb-4">
                                     <h6>Website</h6>
                                     <p>
                                         <a href="#">google.com</a>
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

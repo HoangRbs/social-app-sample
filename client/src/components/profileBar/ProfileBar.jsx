@@ -42,12 +42,12 @@ export default function ProfileBar ({user, isProfileBarActive, setProfileBarActi
                                 {/* <p className ="text-muted"> {'some description of user if necessery ......'} </p> */}
                                 <div className ="mt-4 mb-4">
                                     <h6>Email</h6>
-                                    <p className ="text-muted">{user.email}</p>
+                                    <p className ="text-muted">{user?.email}</p>
                                 </div>
                                 <div className ="mt-4 mb-4">
                                     <h6>Joined Date</h6>
                                     <p className ="text-muted">{
-                                        new Date(user.createdAt).toLocaleString('en-US', {
+                                        new Date(user?.createdAt).toLocaleString('en-US', {
                                             // hour: 'numeric',
                                             // minute: 'numeric',
                                             // hour12: true,

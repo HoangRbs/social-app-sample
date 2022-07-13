@@ -25,6 +25,7 @@ export default function  CurrentChatBox({
     const [disableTextInput, setDisableTextInput] = useState(false);
     const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
     const [isOnline, setIsOnline] = useState(false); // for private chat only
+    const [lastOnlineTime, setLastOnlineTime] = useState(); // for private chat only
 
     // --------- modal ------------------
     const [openMembersModal, setOpenMembersModal] = useState(false);
@@ -49,6 +50,7 @@ export default function  CurrentChatBox({
                     setIsOnline(true);
                 } else {
                     setIsOnline(false);
+                    setLastOnlineTime(receiver.last_online_time);
                 }
             };
 
@@ -74,6 +76,7 @@ export default function  CurrentChatBox({
                 setIsOnline(true);
             } else {
                 setIsOnline(false);
+                setLastOnlineTime(membersInBox[1]?.last_online_time);
             }
         } else {
             setIsOnline(false);
@@ -161,8 +164,30 @@ export default function  CurrentChatBox({
                     </figure>
                     <div>
                         <h5>{ currentChat.conversationName }</h5>
-                        {isOnline ? 
-                            <span>Online <FiberManualRecord fontSize = 'small' htmlColor='#00ba51'/> </span>: 
+                        {
+                            !currentChat.is_group ? 
+                                isOnline ? 
+                                <span>Online <FiberManualRecord fontSize = 'small' htmlColor='#00ba51'/> </span>
+                                : 
+                                lastOnlineTime ? 
+                                    <span>
+                                        <small className="text-instagram">
+                                            {'Last Online '}
+                                            {
+                                                new Date(lastOnlineTime).toLocaleString('en-US', 
+                                                {
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                    hour12: true,
+                                                    day: 'numeric',
+                                                    month: 'numeric',
+                                                    year: '2-digit'
+                                                })
+                                            }</small>
+                                    </span> 
+                                : 
+                                <></>
+                            : 
                             <></>
                         }
                     </div>
